@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -9,64 +9,42 @@ import { jwtDecode } from "jwt-decode";
 const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
   
   const token = useSelector((state) => state.auth.token);
-  
+  const tokenvalue = localStorage.getItem('token');
+  const decodedToken = jwtDecode(tokenvalue);
+  const userName = decodedToken.name;
   const navigate = useNavigate();
-
+  
   const [menuVisible, setMenuVisible] = useState(false);
-  const [role, setrole] = useState(null);
-  
-  
-  const getCurrentUserRole = () => {
-    const token = localStorage.getItem('token');
-    if(!token) return null;
-    
-    try{
-      const decodedToken = jwtDecode(token);
-      return decodedToken.role;
-    }catch(error){
-      console.log(error);
+  const logoutHandler = async () => {
+    try {
+      const token = localStorage.getItem('token');
       
+      const response = await axios.delete('http://localhost:3000/logout', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          },
+      });
+
+      if (response.data.status === 200) {
+        toast.success("Logout Successfully");
+        localStorage.removeItem('token');
+        navigate("/login");
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.response.data.status.message);
+      } else {
+        console.error('Network Error:', error.message);
+      }
     }
-  }
-
-  useEffect(()=> {
-    const value = getCurrentUserRole();
-    setrole(value);
-  }, []);
-
-const logoutHandler = async () => {
-  try {
-     const token = localStorage.getItem('token');
-
-     const response = await axios.delete('http://localhost:3000/logout', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    
-    // console.log("response status---------------" , response.status)
-
-    if (response.status === 204) {
-      toast.success("Logout Successfully");
-      localStorage.removeItem('token');
-      navigate("/login");
-    }
-  } catch (error) {
-    if (error.response) {
-      console.error('Error:', error.response.data.status.message);
-    } else {
-      console.error('Network Error:', error.message);
-    }
-  }
-};
+  };
 
   const toggleMenu = () => setMenuVisible((prev) => !prev);
-
   return (
     <nav className="relative bg-gray-200 border-gray-200 dark:bg-gray-900">
       <div className="flex flex-wrap items-center justify-between p-10 mx-auto max-w-screen-2xl">
         <a className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="https://flowbite.com/docs/images/logo.svg" className="h-8 hover:cursor-pointer" alt="Flowbite Logo" />
+          <img src="https://flowbite.com/docs/images/logo.svg" onClick={toggleDrawer} className="h-8 hover:cursor-pointer" alt="Flowbite Logo" />
           <span className="self-center text-2xl font-semibold hover:cursor-pointer whitespace-nowrap dark:text-white" 
           onClick={toggleDrawer}>
             ManageUR pj
@@ -88,13 +66,14 @@ const logoutHandler = async () => {
           {dropdownVisible && (
             <div className="z-50 absolute left-[79%] top-[3%] my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
               <ul className="py-2">
-                <li>
+              <li>
                   <Link to="/dashboard"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                   >
-                    Dashboard
+                    {userName}
                   </Link>
                 </li>
+                
                 <li>
                   <Link to="/setting"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
@@ -153,31 +132,11 @@ const logoutHandler = async () => {
                 Employees
               </Link>
             </li>
-            
-            
-            { role === "HR"  ? (<li>
-                <Link to="/createemployee"
-                  className="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                >
-                  Create-Employee
-                </Link>
-                      </li>) : (
-              <></>)
-            }
-                 
             <li>
               <Link to="/projects"
                 className="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Projects
-              </Link>
-            </li>
-            
-            <li>
-              <Link to="/createprojects"
-                className="block px-3 py-2 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                CreateProjects
               </Link>
             </li>
           </ul>

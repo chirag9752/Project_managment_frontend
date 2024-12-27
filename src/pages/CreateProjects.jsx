@@ -1,43 +1,59 @@
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const CreateProjects = () => {
 
-    const [formData, setFormData] = useState({
-        project_name: "",
-        billing_rate: "",
-        user_id: ""
-    });
-    
+  const navigate = useNavigate();
+  const tokenvalue = localStorage.getItem('token');
+  const decodedToken = jwtDecode(tokenvalue);
+  const userId = parseInt(decodedToken.sub, 10);
+  const [formData, setFormData] = useState({project:{ project_name: "",billing_rate: "",user_id: ""}});
+
     const Handlerfunction = (e) => {
         const {name, value} = e.target;
-        
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value
+            project: {
+              ...prevData.project,
+              [name]: value
+            }
         }));
     }
     
     const CreateProjectHandler = async(event) => {
         event.preventDefault();
         
-        if (!formData.project_name.trim() || !formData.billing_rate.trim() || !formData.user_id.trim()) {
+        if (!formData.project.project_name.trim() || !formData.project.billing_rate.trim() || !formData.project.user_id.trim()) {
             toast.error("Please fill out all the fields before submitting.");
             return; 
         }
-        
+
         try{
-            const res = await axios.post("http://localhost:3000/projects", formData, {
-                headers: {
-                    "Content-Type": "application/json",
-                 },
-                withCredentials: true, 
-            });
+          const token = localStorage.getItem('token');
+          const res = await axios.post("http://localhost:3000/users/execute_feature",
+            {
+              ...formData, // Include the formData fields
+              featureknown: {
+                feature_name: "createproject",
+                userid: userId,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              },
+              withCredentials: true,
+            }
+          );
             
             if(res.status === 201){
                 toast.success("CreateProject Successfully");
-                setFormData({ project_name: "",billing_rate: "",user_id: ""});
+                setFormData({project:{ project_name: "",billing_rate: "",user_id: ""}});
+                navigate("/projects");
             }else{
               console.log(res.error);
             }
@@ -79,7 +95,7 @@ const CreateProjects = () => {
                 type="project_name"
                 placeholder="Enter your name..."
                 name="project_name"
-                value={formData.project_name}
+                value={formData.project.project_name}
                 onChange={Handlerfunction}
               />
 
@@ -88,7 +104,7 @@ const CreateProjects = () => {
                 type="billing_rate"
                 placeholder="set billing_rate"
                 name="billing_rate"
-                value={formData.billing_rate}
+                value={formData.project.billing_rate}
                 onChange={Handlerfunction}
               />
               
@@ -97,7 +113,7 @@ const CreateProjects = () => {
                 type="user_id"
                 placeholder="assign_user with id"
                 name="user_id"
-                value={formData.user_id}
+                value={formData.project.user_id}
                 onChange={Handlerfunction}
               />
   

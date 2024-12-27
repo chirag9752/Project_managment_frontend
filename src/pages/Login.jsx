@@ -29,9 +29,6 @@ import { login } from "../redux/authSlice";
         [name]: value,
     }}))}
     
-    
-    
-
     const LoginHandler = async (event) => {
       event.preventDefault();
       try {
@@ -39,14 +36,13 @@ import { login } from "../redux/authSlice";
           headers: {
             "Content-Type": "application/json",
           },
-            withCredentials: true, // Required for cookies
+            withCredentials: true,
           });
-      
           if (res.status === 200) {
             toast.success("Login Successfully");
             // localStorage.setItem("token", res.data.token); // Updated token path
             // localStorage.setItem("user", JSON.stringify(res.data.data.user)); // Updated user path
-            const token = res.data.data.token
+            const token = res.data.status.token;
             dispatch(login(token));
             navigate("/");
             setformData({user: { email: "",password: ""}});

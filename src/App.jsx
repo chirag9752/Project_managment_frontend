@@ -11,6 +11,9 @@ import CreateEmployee from './pages/CreateEmployee'
 import Projects from './pages/Projects'
 import CreateProjects from './pages/CreateProjects'
 import ProjectDetails from './pages/ProjectDetails'
+import Dashboard from './pages/Dashboard'
+import AssignFeature from './pages/AssignFeature'
+import RemoveFeature from './pages/RemoveFeature'
 
 function App() {
   return (
@@ -62,6 +65,30 @@ function App() {
           <ProtectedRoute>
           <CreateProjects/>
         </ProtectedRoute>
+        } />
+
+        <Route 
+        path="/dashboard" 
+        element={
+          <ProtectedRoute>
+          <Dashboard/>
+        </ProtectedRoute>
+        } />
+
+        <Route 
+        path="/assignfeature" 
+        element={
+          <ProtectedRoute>
+          <AssignFeature/>
+         </ProtectedRoute>
+        } />
+
+        <Route 
+        path="/removefeature" 
+        element={
+          <ProtectedRoute>
+          <RemoveFeature/>
+         </ProtectedRoute>
         } />
 
         <Route path='/login' element={<Login/>} />

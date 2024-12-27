@@ -3,6 +3,10 @@ import "../App.css";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllowedFeatures } from "../redux/features/featureSlice";
 
 const Home = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -10,25 +14,57 @@ const Home = () => {
   const toggleDropdown = () => setDropdownVisible((prev) => !prev);
   const toggleDrawer = () =>  setIsDrawerOpen(!isDrawerOpen);
   const [users, setUsers] = useState([]);
-  const [loading , setLoading] = useState(true);
+  const [role, setrole] = useState(null);
+  const tokenvalue = localStorage.getItem('token');
+  const decodedToken = jwtDecode(tokenvalue);
+  const userId = parseInt(decodedToken.sub, 10);
+
+  const dispatch = useDispatch();
+
+  const {featureAllowed , loading, error} = useSelector((state) => state.features);
+
+  useEffect(() => {
+    dispatch(fetchAllowedFeatures(userId));
+  }, [userId, dispatch]);
+
+  useEffect(() => {
+    if(error){
+      toast.error(error);
+    }
+  }, [error]);
+
+  const isFeatureAllowed = (featureName) => {
+    return featureAllowed.includes(featureName);
+  }
+
+  const getCurrentUserRole = () => {
+    if(!tokenvalue) return null;
+    try{
+      const decodedToken = jwtDecode(tokenvalue);
+      return decodedToken.role;
+    }catch(error){
+      console.log(error);    
+    }
+  }
+  
+  useEffect(()=> {
+    const value = getCurrentUserRole();
+    setrole(value);
+  }, []);
   
   useEffect(() => {
     const fetchData = async() => {
       try{
         const response = await axios.get("http://localhost:3000/users");
         setUsers(response.data.data);
-        setLoading(false);
       }catch(error){
         console.log("error in fetching all users data", error.message);
-        setLoading(false);
       }
     };
     
     fetchData();
   }, []);
   
-  
-
   return (
     <div className="App">
       {/* Navbar */}
@@ -46,7 +82,6 @@ const Home = () => {
         ></div>
       )}
 
-      
        {/* navigation dropdown handle */}
       {dropdownVisible && (
         <div
@@ -59,8 +94,8 @@ const Home = () => {
       <div
         className={`drawer ${isDrawerOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <h5 className="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">
-          Menu
+        <h5 className="p-3 text-base font-semibold text-center text-white uppercase bg-blue-900 dark:text-gray-400">
+          Features
         </h5>
         <button
           onClick={toggleDrawer}
@@ -81,31 +116,51 @@ const Home = () => {
           </svg>
           <span className="sr-only">Close menu</span>
         </button>
-        <ul className="py-4 space-y-2 font-medium">
+        <ul className="py-4 space-y-2 font-medium text-center">
           <li>
-            <a
-              href="#"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+            <Link to="#"
+              className="items-center block p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <span className="ml-3">Dashboard</span>
-            </a>
+              Kanban
+            </Link>
           </li>
-          <li>
-            <a
-              href="#"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+          
+          { role === "HR"  ? (<li>
+            <Link to="/createemployee"
+              className="block p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <span className="ml-3">Kanban</span>
-            </a>
-          </li>
-          {/* Add more menu items as needed */}
+              Create-Employee
+            </Link>
+                  </li>) : (<></>)
+          }
+          {
+            isFeatureAllowed("createproject") ? (
+            <li>
+              <Link to= "/createprojects"
+                className="block p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+                CreateProjects
+              </Link>
+            </li>
+          ) : (<></>)
+          }
+
+          {
+            isFeatureAllowed("assignfeature") ? (
+             <li>
+              <Link to= "/assignfeature"
+                className="block p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+                FeatureGate
+              </Link>
+              </li>
+            ) : (<></>)
+          }
         </ul>
       </div>
       
       {/* ALL Employees */}
       
       <div className="min-h-screen p-5 bg-gray-100">
-      <h1 className="mb-5 text-3xl font-bold text-center">User List</h1>
+      <h1 className="mb-5 text-3xl font-bold text-center"></h1>
       
       {loading ? (
         <p className="text-center text-gray-600">Loading...</p>
