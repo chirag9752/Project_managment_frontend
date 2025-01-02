@@ -7,6 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllowedFeatures } from "../redux/features/featureSlice";
+import useCurrentUserRole from "../components/useCurrentUserRole";
 
 const Home = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -14,14 +15,16 @@ const Home = () => {
   const toggleDropdown = () => setDropdownVisible((prev) => !prev);
   const toggleDrawer = () =>  setIsDrawerOpen(!isDrawerOpen);
   const [users, setUsers] = useState([]);
-  const [role, setrole] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const role = useCurrentUserRole();
   const tokenvalue = localStorage.getItem('token');
   const decodedToken = jwtDecode(tokenvalue);
   const userId = parseInt(decodedToken.sub, 10);
+  // const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   const dispatch = useDispatch();
 
-  const {featureAllowed , loading, error} = useSelector((state) => state.features);
+  const {featureAllowed, error} = useSelector((state) => state.features);
 
   useEffect(() => {
     dispatch(fetchAllowedFeatures(userId));
@@ -36,28 +39,16 @@ const Home = () => {
   const isFeatureAllowed = (featureName) => {
     return featureAllowed.includes(featureName);
   }
-
-  const getCurrentUserRole = () => {
-    if(!tokenvalue) return null;
-    try{
-      const decodedToken = jwtDecode(tokenvalue);
-      return decodedToken.role;
-    }catch(error){
-      console.log(error);    
-    }
-  }
-  
-  useEffect(()=> {
-    const value = getCurrentUserRole();
-    setrole(value);
-  }, []);
   
   useEffect(() => {
     const fetchData = async() => {
       try{
+        setLoading(true);
         const response = await axios.get("http://localhost:3000/users");
+        setLoading(false);
         setUsers(response.data.data);
       }catch(error){
+        setLoading(true);
         console.log("error in fetching all users data", error.message);
       }
     };
@@ -154,6 +145,17 @@ const Home = () => {
               </li>
             ) : (<></>)
           }
+
+          {
+            isFeatureAllowed("timesheet") ? (
+             <li>
+              <Link to= "/timesheet"
+                className="block p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+                Timesheets
+              </Link>
+              </li>
+            ) : (<></>)
+          }
         </ul>
       </div>
       
@@ -167,7 +169,7 @@ const Home = () => {
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
           {users.map((user) => (
-            <Link to={`/users/${user.id}`}
+            <Link to={`/users/${user.id}`} 
               key={user.id}
               className="p-4 transition-shadow bg-white rounded-lg shadow-lg hover:shadow-2xl"
               

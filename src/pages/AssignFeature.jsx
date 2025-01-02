@@ -116,7 +116,7 @@ import { useNavigate } from "react-router-dom";
           console.log(response.error);
         }
     }catch(error){
-       toast.error(error.message);
+       toast.error( error.response.data.errors);
     }
   };
 
@@ -150,7 +150,7 @@ import { useNavigate } from "react-router-dom";
           console.log(response.error);
         }
     }catch(error){
-       toast.error(error.message);
+       toast.error(error.response.data.errors);
     }
 
   }

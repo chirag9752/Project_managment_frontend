@@ -10,7 +10,64 @@ const CreateProjects = () => {
   const tokenvalue = localStorage.getItem('token');
   const decodedToken = jwtDecode(tokenvalue);
   const userId = parseInt(decodedToken.sub, 10);
-  const [formData, setFormData] = useState({project:{ project_name: "",billing_rate: "",user_id: ""}});
+  // const [particularUserId , setParticularUserId] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" && inputValue.trim() !== "") {
+      if (!tags.includes(inputValue.trim())) {
+        setTags((prevTags) => [...prevTags, inputValue.trim()]);
+        setInputValue("");
+      } else {
+        toast.error("Item already added.");
+      }
+      event.preventDefault();
+    }
+  };
+
+  const handleRemoveTag = (indexToRemove) => {
+    setTags((prevTags) => prevTags.filter((_, index) => index !== indexToRemove));
+  };
+
+  const Userarr = async() => {
+    try {
+        const response = await axios.get("http://localhost:3000/users",
+          {
+            headers: {
+              Authorization: `Bearer ${tokenvalue}`,
+              }
+          }
+        );
+        console.log("response data", response);
+        return response.data;
+       
+          
+     } catch (error) {
+        console.log(error.message);
+        toast.error(error.message);
+        return [];
+      }
+    };
+
+  const handleInputChange = async(event) => {
+    try{
+      setInputValue(event.target.value);
+      const value = await Userarr();
+      if (Array.isArray(value.data)) {
+        setFilteredUsers(
+          value.data.filter((user) =>
+            user.email.toLowerCase().includes(event.target.value.toLowerCase())
+        ))
+      }
+    }catch(error){
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  const [formData, setFormData] = useState({project:{ project_name: "",billing_rate: ""}});
 
     const Handlerfunction = (e) => {
         const {name, value} = e.target;
@@ -22,20 +79,23 @@ const CreateProjects = () => {
             }
         }));
     }
+
+    // const setuserIdHandler = (userid) => {
+    //   setParticularUserId((prevId) => [...prevId, userid]);
+    // }
     
     const CreateProjectHandler = async(event) => {
         event.preventDefault();
         
-        if (!formData.project.project_name.trim() || !formData.project.billing_rate.trim() || !formData.project.user_id.trim()) {
-            toast.error("Please fill out all the fields before submitting.");
-            return; 
-        }
-
         try{
           const token = localStorage.getItem('token');
           const res = await axios.post("http://localhost:3000/users/execute_feature",
             {
-              ...formData, // Include the formData fields
+              project:{
+              project_name: formData.project.project_name,
+              billing_rate: formData.project.billing_rate,
+              user_emails: tags
+              },
               featureknown: {
                 feature_name: "createproject",
                 userid: userId,
@@ -52,7 +112,7 @@ const CreateProjects = () => {
             
             if(res.status === 201){
                 toast.success("CreateProject Successfully");
-                setFormData({project:{ project_name: "",billing_rate: "",user_id: ""}});
+                setFormData({project:{ project_name: "",billing_rate: ""}});
                 navigate("/projects");
             }else{
               console.log(res.error);
@@ -108,15 +168,65 @@ const CreateProjects = () => {
                 onChange={Handlerfunction}
               />
               
-              <input
+              {/* <input
                 className="w-full px-4 py-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                type="user_id"
+                type="user_ids"
                 placeholder="assign_user with id"
-                name="user_id"
-                value={formData.project.user_id}
+                name="user_ids"
+                value={formData.project.user_ids}
                 onChange={Handlerfunction}
-              />
-  
+              /> */}
+
+            <div className="flex flex-col items-center w-full max-w-md mx-auto mt-10">
+                <div className="w-full px-4 py-2 mb-4 bg-white border rounded-lg shadow">
+                  <div className="flex flex-wrap gap-2 p-2">
+                    {tags.map((tag, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center px-2 py-1 text-sm text-white bg-blue-500 rounded-md"
+                      >
+                        <span>{tag}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTag(index)}
+                          className="ml-2 text-xs text-red-200 hover:text-white"
+                        >
+                          x
+                        </button>
+                      </div>
+                    ))}
+                  
+                  <div>
+                    <input
+                      type="text"
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Type and press Enter..."
+                      className="flex-grow p-1 border-none focus:outline-none"
+                    />
+                    {filteredUsers.length > 0 && (
+                    <ul className="mt-2 bg-white border border-gray-300 rounded-md shadow-md max-h-40 overflow-auto">
+                      {filteredUsers.map((user) => (
+                        <li
+                          key={user.id}
+                          onClick={() => {
+                            // setParticularUserId(user.id);
+                            // setuserIdHandler(user.id);
+                            setInputValue(user.email);
+                            setFilteredUsers([]);
+                          }}
+                          className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                        >
+                          {user.email} (ID: {user.id})
+                       </li>
+                     ))}
+                    </ul>)}
+                  </div>
+                  </div>
+                </div>
+              </div>
+            
               <button className="w-full px-5 py-3 mb-4 text-white bg-gray-800 rounded-lg hover:bg-gray-900"
               onClick={CreateProjectHandler}>
                 CreateUrpG
@@ -130,4 +240,3 @@ const CreateProjects = () => {
 
 export default CreateProjects;
 
-       

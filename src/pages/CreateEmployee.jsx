@@ -1,9 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
   const CreateEmployee = () => {
+
+    const naviagte = useNavigate();
 
     const [formData, setformData] = useState(
         { user: {
@@ -44,15 +46,15 @@ import toast from "react-hot-toast";
                 withCredentials: true, // Required for cookies
             });
 
-            if(res.status === 201){
+            if(res.status === 200){
                 toast.success("CreateEmployee Successfully");
+                naviagte("/");
                 setformData({user: { email: "", password: "",  name: "", role: "", employee_type: ""}});
             }
 
           }catch(error){
             if (error.response) {
-                const { status } = error.response;
-                if (status === 422) {
+                if (error.status === 422) {
                     toast.error("user already registered please check again");
                 } else {
                   toast.error(`${error.message}`);

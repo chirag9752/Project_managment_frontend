@@ -12,6 +12,7 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
   const tokenvalue = localStorage.getItem('token');
   const decodedToken = jwtDecode(tokenvalue);
   const userName = decodedToken.name;
+  const currentUserId = decodedToken.id;
   const navigate = useNavigate();
   
   const [menuVisible, setMenuVisible] = useState(false);
@@ -67,7 +68,7 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
             <div className="z-50 absolute left-[79%] top-[3%] my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
               <ul className="py-2">
               <li>
-                  <Link to="/dashboard"
+                  <Link to={`/users/${currentUserId}`} 
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                   >
                     {userName}

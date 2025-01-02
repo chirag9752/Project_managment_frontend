@@ -14,8 +14,20 @@ import ProjectDetails from './pages/ProjectDetails'
 import Dashboard from './pages/Dashboard'
 import AssignFeature from './pages/AssignFeature'
 import RemoveFeature from './pages/RemoveFeature'
+import ErrorPage from './pages/ErrorPage'
+import Timesheet from './pages/Timesheet'
+import { useSelector } from 'react-redux'
+import { jwtDecode } from 'jwt-decode'
 
 function App() {
+
+  const token = useSelector((state) => state.auth.token);
+  let role = null;
+  if(token){
+    const decodetoken = jwtDecode(token);
+    role = decodetoken.role;
+  }
+ 
   return (
     <div>
       <Routes>
@@ -45,11 +57,9 @@ function App() {
 
        <Route 
         path="/createemployee" 
-        element={
-          <ProtectedRoute>
+        element={ role == "HR" ? ( <ProtectedRoute>
           <CreateEmployee/>
-        </ProtectedRoute>
-        } />
+        </ProtectedRoute> )  : <ErrorPage/> } />
 
         <Route 
         path="/projects" 
@@ -88,6 +98,14 @@ function App() {
         element={
           <ProtectedRoute>
           <RemoveFeature/>
+         </ProtectedRoute>
+        } />
+
+        <Route 
+        path="/timesheet" 
+        element={
+          <ProtectedRoute>
+          <Timesheet/>
          </ProtectedRoute>
         } />
 
