@@ -7,7 +7,6 @@ import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllowedFeatures } from "../redux/features/featureSlice";
-import useCurrentUserRole from "../components/useCurrentUserRole";
 
 const Home = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -16,7 +15,6 @@ const Home = () => {
   const toggleDrawer = () =>  setIsDrawerOpen(!isDrawerOpen);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const role = useCurrentUserRole();
   const tokenvalue = localStorage.getItem('token');
   const decodedToken = jwtDecode(tokenvalue);
   const userId = parseInt(decodedToken.sub, 10);
@@ -115,46 +113,20 @@ const Home = () => {
               Kanban
             </Link>
           </li>
-          
-          { role === "HR"  ? (<li>
-            <Link to="/createemployee"
-              className="block p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              Create-Employee
-            </Link>
-                  </li>) : (<></>)
-          }
-          {
-            isFeatureAllowed("createproject") ? (
-            <li>
-              <Link to= "/createprojects"
-                className="block p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                CreateProjects
-              </Link>
-            </li>
-          ) : (<></>)
-          }
 
           {
-            isFeatureAllowed("assignfeature") ? (
-             <li>
-              <Link to= "/assignfeature"
-                className="block p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                FeatureGate
-              </Link>
-              </li>
-            ) : (<></>)
-          }
-
-          {
-            isFeatureAllowed("timesheet") ? (
-             <li>
-              <Link to= "/timesheet"
-                className="block p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                Timesheets
-              </Link>
-              </li>
-            ) : (<></>)
+            featureAllowed.map((feature) =>
+              isFeatureAllowed(feature) ? (
+                <li key={feature}>
+                  <Link
+                    to={`/${feature.toLowerCase()}`}
+                    className="block p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                  {feature.replace(/([a-z])([A-Z])/g, '$1 $2')}
+                  </Link>
+                </li>
+              ) : null
+            )
           }
         </ul>
       </div>

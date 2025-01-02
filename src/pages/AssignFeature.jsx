@@ -2,10 +2,10 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
   const AssignFeature = () => {
-
   const [userId, setUserId] = useState("");
   const [featureId, setFeatureId] = useState("");
   const [userSearch, setUserSearch] = useState("");
@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
   const decodedToken = jwtDecode(token);
   const currentUserId = parseInt(decodedToken.sub, 10);
   const navigate = useNavigate();
+  const {featureAllowed} = useSelector((state) => state.features);
  
     const Userarr = async () => {
     try {
@@ -34,22 +35,6 @@ import { useNavigate } from "react-router-dom";
         return [];
       }
     };
-
-    const featureAllowed = async() => {
-      try{
-          const response =  await axios.get("http://localhost:3000/users/features/index",
-            {
-              headers: {
-              Authorization: `Bearer ${token}`,
-              }
-            }
-          );
-          return response.data;
-      }catch(error){
-          toast.error(error.message);
-          return [];
-      }
-    }
 
   // Handle search for users
   const handleUserSearch = async(query) => {
@@ -102,7 +87,7 @@ import { useNavigate } from "react-router-dom";
          }
       },
       {
-               headers: {
+        headers: {
         "Content-Type": "application/json",
          Authorization: `Bearer ${token}`
         },
