@@ -68,7 +68,7 @@ function App() {
         } />
 
         <Route 
-        path="/users/:id" 
+        path="/users/details/:id" 
         element={
           <ProtectedRoute>
           <Details />
@@ -91,11 +91,11 @@ function App() {
 
         <Route 
         path="/projects" 
-        element={
+        element={ isFeatureAllowed("projects") ? (
           <ProtectedRoute>
           <Projects/>
         </ProtectedRoute>
-        } />
+        ) : <ErrorPage/> } />
 
         <Route 
         path="/createproject" 

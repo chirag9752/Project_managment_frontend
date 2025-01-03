@@ -1,26 +1,68 @@
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
 const Projects = () => {
 
-    const [projects, setProjects] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem('token');
+  const decodeToken = token ? jwtDecode(token) : null;
+  const userId = parseInt(decodeToken.sub, 10);
 
-    useEffect(()=> {
-      const getProjects = async() => {
-          try{
-            const response = await axios.get("http://localhost:3000/projects");
-            setProjects(response.data.data);
-            setLoading(false);
-          }catch(err){
-            console.log(err);
-            toast.error(err);
+
+  // const token = localStorage.getItem('token');
+  // const res = await axios.post("http://localhost:3000/users/execute_feature",
+  //   {
+  //     project:{
+  //     project_name: formData.project.project_name,
+  //     billing_rate: formData.project.billing_rate,
+  //     user_List: userList
+  //     },
+  //     featureknown: {
+  //       feature_name: "createproject",
+  //       userid: userId,
+  //     },
+  //   },
+  //   {
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${token}`
+  //     },
+  //     withCredentials: true,
+  //   }
+  // );
+
+  useEffect(()=> {
+    const getProjects = async() => {
+    try{
+        const token = localStorage.getItem('token');
+        const response = await axios.post("http://localhost:3000/users/execute_feature",
+          {
+          featureknown: {
+            feature_name: "projects",
+            userid: userId
+             },
+          },
+          {
+            headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+            },
+            withCredentials: true,
           }
-      }
+        );
 
-      getProjects();
+        setProjects(response.data.data);
+        setLoading(false);
+    }catch(err){
+     toast.error(err);
+    }
+  }
+
+    getProjects();
 
     },[]);
 
@@ -37,7 +79,7 @@ const Projects = () => {
                         className="p-4 transition-shadow bg-white rounded-lg shadow-lg hover:shadow-2xl"
                         >
                         <h2 className="text-xl font-semibold text-gray-800">
-                            {project.project_name}
+                            {project.name}
                         </h2>
                         <p className="text-gray-600">{project.email}</p>
                         </Link>

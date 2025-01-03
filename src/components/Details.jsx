@@ -17,7 +17,7 @@ const UserProfileModal = () => {
         const fetchUser = async() => {
             try{
                 setLoading(true);
-                const response  = await axios.get(`http://localhost:3000/users/${id}`);
+                const response  = await axios.get(`http://localhost:3000/users/details/${id}`);
                 setUserData(response.data);
             }catch(err){
                 setError(err);

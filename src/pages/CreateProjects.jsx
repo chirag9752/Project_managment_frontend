@@ -174,67 +174,64 @@ const CreateProjects = () => {
               />
            
               <div className="w-[70%] mx-auto px-4 py-3 mb-4 rounded-lg font-sans">
-                    <div className="relative">
-                      {/* Suggestions */}
-                      {filteredEmails.length > 0 && (
-                        <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded shadow-md mt-1">
-                          {filteredEmails.map((user) => (
-                            <li
-                              key={user.email}
-                              onClick={() => handleEmailSelect(user.email)}
-                              className="p-2 cursor-pointer hover:bg-blue-100"
-                            >
-                              {user.email}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-
-                    {/* User List */}
-                    <div className="mt-6">
-                      {userList.map((user, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between p-4 mb-2 bg-gray-100 border border-gray-300 rounded"
+                <div className="relative">
+                  {/* Suggestions */}
+                  {filteredEmails.length > 0 && (
+                    <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded shadow-md mt-1">
+                      {filteredEmails.map((user) => (
+                        <li
+                          key={user.email}
+                          onClick={() => handleEmailSelect(user.email)}
+                          className="p-2 cursor-pointer hover:bg-blue-100"
                         >
-                          <span className="text-gray-700">{user.email}</span>
-                          <div className="space-x-2">
-                            <button
-                              onClick={() => toggleAccess(index, "timesheet")}
-                              className={`px-3 py-1 rounded ${
-                                user.timesheet
-                                  ? "bg-green-500 text-white"
-                                  : "bg-gray-300 text-gray-700"
-                              }`}
-                            >
-                              {user.timesheet ? "Timesheet" : "Timesheet"}
-                            </button>
-                            <button
-                              onClick={() => toggleAccess(index, "billing_access")}
-                              className={`px-3 py-1 rounded ${
-                                user.billing_access
-                                  ? "bg-green-500 text-white"
-                                  : "bg-gray-300 text-gray-700"
-                              }`}
-                            >
-                              {user.billing_access ? "Billing" : "Billing"}
-                            </button>
-                            <button
-                            type="button"
-                            onClick={() => handleRemoveTag(index)}
-                            className="font-bold p-2 m-2 hover:text-white rounded-3xl bg-gray-300"
-                          >
-                            x
-                          </button>
-                          </div>
-                        </div>
+                          {user.email}
+                        </li>
                       ))}
+                    </ul>
+                  )}
+              </div>
+
+              {/* User List */}
+              <div className="mt-6">
+                {userList.map((user, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 mb-2 bg-gray-100 border border-gray-300 rounded"
+                  >
+                    <span className="text-gray-700">{user.email}</span>
+                    <div className="space-x-2">
+                      <button
+                        onClick={() => toggleAccess(index, "timesheet")}
+                        className={`px-3 py-1 rounded ${
+                          user.timesheet
+                            ? "bg-green-500 text-white"
+                            : "bg-gray-300 text-gray-700"
+                        }`}
+                      >
+                        {user.timesheet ? "Timesheet" : "Timesheet"}
+                      </button>
+                      <button
+                        onClick={() => toggleAccess(index, "billing_access")}
+                        className={`px-3 py-1 rounded ${
+                          user.billing_access
+                            ? "bg-green-500 text-white"
+                            : "bg-gray-300 text-gray-700"
+                        }`}
+                      >
+                        {user.billing_access ? "Billing" : "Billing"}
+                      </button>
+                      <button
+                      type="button"
+                      onClick={() => handleRemoveTag(index)}
+                      className="font-bold p-2 m-2 hover:text-white rounded-3xl bg-gray-300"
+                    >
+                      x
+                    </button>
                     </div>
                   </div>
-
-            
-            
+                ))}
+                  </div>
+                </div>
               <button className="w-[70%] mx-auto px-5 py-3 mb-4 text-white bg-gray-800 rounded-lg hover:bg-gray-900"
               onClick={CreateProjectHandler}>
                 CreateUrpG
