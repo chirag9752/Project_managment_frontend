@@ -1,6 +1,6 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -15,6 +15,15 @@ import { useNavigate } from "react-router-dom";
   const decodedToken = jwtDecode(token);
   const currentUserId = parseInt(decodedToken.sub, 10);
   const navigate = useNavigate();
+
+  useEffect(()=> {
+    const currentUserFeature = localStorage.getItem('current_user_feature');
+    const featureAllowed = currentUserFeature.split(',');
+    const value = featureAllowed?.find((feature) => feature === "assignfeature");
+    if(value !== "assignfeature"){
+      navigate('/error');
+    }
+  }, []);
  
     const Userarr = async () => {
     try {

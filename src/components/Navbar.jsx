@@ -19,6 +19,7 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
   const logoutHandler = async () => {
     try {
       const token = localStorage.getItem('token');
+      localStorage.removeItem('current_user_feature');
       
       const response = await axios.delete('http://localhost:3000/logout', {
         headers: {

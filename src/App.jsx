@@ -12,49 +12,10 @@ import CreateProjects from './pages/CreateProjects'
 import ProjectDetails from './pages/ProjectDetails'
 import Dashboard from './pages/Dashboard'
 import AssignFeature from './pages/AssignFeature'
-import ErrorPage from './pages/ErrorPage'
 import Timesheet from './pages/Timesheet'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { jwtDecode } from 'jwt-decode'
+import ErrorPage from './pages/ErrorPage'
 
 function App() {
-
-  const [allowedFeature, setAllowedFeature] = useState([]);
-  const token = localStorage.getItem('token');
-  const decodedToken = token ? jwtDecode(token) : null;
-  const userId = parseInt(decodedToken.sub, 10);
-  
-  const fetchFeatureAllowed = async() => {
-    try{
-        const token = localStorage.getItem('token');
-        const response = await axios.post("http://localhost:3000/users/checkinguserfeature", 
-        {userid: userId},
-        {
-          headers:{
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-        );
-        return response.data.allowed_features
-    }catch(error){
-        console.log("errror", error);
-      }
-  }
-
-  const handleFetch = async () => {
-    const allowedFeatures = await fetchFeatureAllowed();
-    setAllowedFeature(allowedFeatures);
-  };
-  
-  const isFeatureAllowed = (featureName) => {
-    return allowedFeature.includes(featureName);
-  }
-
-  useEffect(()=> {
-    handleFetch()
-  },[])
  
   return (
     <div>
@@ -85,24 +46,22 @@ function App() {
 
        <Route 
         path="/createemployee" 
-        element={isFeatureAllowed("createemployee") ? ( <ProtectedRoute>
+        element={<ProtectedRoute>
         <CreateEmployee/>
-        </ProtectedRoute> )  : <ErrorPage/> } />
+        </ProtectedRoute>}/>
 
         <Route 
         path="/projects" 
-        element={ isFeatureAllowed("projects") ? (
-          <ProtectedRoute>
+        element={ <ProtectedRoute>
           <Projects/>
-        </ProtectedRoute>
-        ) : <ErrorPage/> } />
+        </ProtectedRoute>} />
 
         <Route 
         path="/createproject" 
-        element={ isFeatureAllowed("createproject") ? (
+        element={ 
           <ProtectedRoute>
             <CreateProjects/>
-          </ProtectedRoute> ) : ( <ErrorPage/> )
+          </ProtectedRoute>
         } />
 
         <Route 
@@ -116,17 +75,17 @@ function App() {
         <Route 
         path="/assignfeature" 
         element={
-          isFeatureAllowed("assignfeature") ? ( <ProtectedRoute>
+           <ProtectedRoute>
             <AssignFeature/>
-           </ProtectedRoute>) : ( <ErrorPage/> )
+           </ProtectedRoute>
         } />
 
         <Route 
         path="/removefeature" 
         element={
-          isFeatureAllowed("removefeature") ? ( <ProtectedRoute>
+           <ProtectedRoute>
             <AssignFeature/>
-           </ProtectedRoute>) : ( <ErrorPage/> )
+           </ProtectedRoute>
         } />
 
         <Route 
@@ -140,6 +99,7 @@ function App() {
         <Route path='/login' element={<Login/>} />
         <Route path='/signup' element={<SignUp/>} />
         <Route path='/navbar' element={<Navbar/>} />
+        <Route path='/error' element={<ErrorPage/>} />
       </Routes>
     </div>
   )

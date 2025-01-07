@@ -5,10 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
   const SignUp = () => {
-
     const navigate = useNavigate();
-
-    // :email, :password, :password_confirmation, :name, :role, :employee_type
     const [formData, setformData] = useState(
         { user: {
             email : "", password : "", name: ""
@@ -38,7 +35,10 @@ import { Link } from "react-router-dom";
                 withCredentials: true, // Required for cookies
             });
 
-            if(res.status === 201){
+            console.log(res.status);
+            
+
+            if(res.status === 200){
                 toast.success("Signup Successfully");
                 localStorage.setItem("token" , res.data.token);
                 localStorage.setItem("user" , JSON.stringify(res.data.user));

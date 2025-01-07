@@ -2,7 +2,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Projects = () => {
 
@@ -11,33 +11,19 @@ const Projects = () => {
   const token = localStorage.getItem('token');
   const decodeToken = token ? jwtDecode(token) : null;
   const userId = parseInt(decodeToken.sub, 10);
-
-
-  // const token = localStorage.getItem('token');
-  // const res = await axios.post("http://localhost:3000/users/execute_feature",
-  //   {
-  //     project:{
-  //     project_name: formData.project.project_name,
-  //     billing_rate: formData.project.billing_rate,
-  //     user_List: userList
-  //     },
-  //     featureknown: {
-  //       feature_name: "createproject",
-  //       userid: userId,
-  //     },
-  //   },
-  //   {
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${token}`
-  //     },
-  //     withCredentials: true,
-  //   }
-  // );
+  const navigate = useNavigate();
 
   useEffect(()=> {
     const getProjects = async() => {
     try{
+        const currentUserFeature = localStorage.getItem('current_user_feature');
+        const featureAllowed = currentUserFeature.split(',');
+        const value = featureAllowed?.find((feature) => feature === "projects");
+        if(value !== "projects"){
+          navigate('/error');
+        }
+
+        // execute feature api
         const token = localStorage.getItem('token');
         const response = await axios.post("http://localhost:3000/users/execute_feature",
           {
@@ -57,10 +43,10 @@ const Projects = () => {
 
         setProjects(response.data.data);
         setLoading(false);
-    }catch(err){
-     toast.error(err);
+        }catch(err){
+        toast.error(err);
+        }
     }
-  }
 
     getProjects();
 

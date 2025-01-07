@@ -8,6 +8,7 @@ const ProtectedRoute = ({ children }) => {
   const currentTime = Date.now() / 1000;
 
   if(!token){
+    localStorage.removeItem('current_user_feature');
     return <Navigate to="/login" replace />
   }
 
@@ -15,6 +16,7 @@ const ProtectedRoute = ({ children }) => {
 
   if (currentTime >= exp) {
     localStorage.removeItem('token');
+    localStorage.removeItem('current_user_feature');
     return <Navigate to="/login" replace />;
   }
 

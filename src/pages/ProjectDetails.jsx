@@ -53,12 +53,8 @@ const ProjectDetails = () => {
     return <div className="mt-5 text-lg font-semibold text-center">Loading...</div>;
   }
 
-  const handleAccess = (route, isAuthorized) => {
-    if (isAuthorized) {
-      navigate(route);
-    } else {
-      toast.error('You are not authorized to access this route');
-    }
+  const handleAccess = (route) => {
+    navigate(route)
   };
   
   return (
@@ -85,19 +81,23 @@ const ProjectDetails = () => {
         </div>
 
         <div className="flex justify-between items-center">
-          <button
-            onClick={() => handleAccess('/timesheet', timesheet)}
-            className={`text-white px-4 py-2 rounded-md ${timesheet ? 'bg-blue-500 hover:bg-blue-600' : 'bg-red-500 hover:bg-red-600'}`}
-          >
-            Timesheet
-          </button>
+          {
+            timesheet ? (<button
+              onClick={() => handleAccess('/timesheet')}
+              className={`text-white px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600`}
+            >
+              Timesheet
+            </button>) : (<></>)
+          }
 
-          <button
-            onClick={() => handleAccess('/billing', billingaccess)}
-            className={`text-white px-4 py-2 rounded-md ${billingaccess ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`}
-          >
-            See Bills
-          </button>
+          {
+            billingaccess ? (<button
+              onClick={() => handleAccess('/billing')}
+              className={`text-white px-4 py-2 rounded-md bg-green-500 hover:bg-green-600`}
+            >
+              See Bills
+            </button>) : (<></>)
+          }
        </div>
       </div>
        )}

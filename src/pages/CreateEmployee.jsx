@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
   const CreateEmployee = () => {
 
-    const naviagte = useNavigate();
+    const navigate = useNavigate();
+
+    useEffect(()=> {
+      const currentUserFeature = localStorage.getItem('current_user_feature');
+      const featureAllowed = currentUserFeature.split(',');
+      const value = featureAllowed?.find((feature) => feature === "createemployee");
+      if(value !== "createemployee"){
+        navigate('/error');
+      }
+    }, []);
 
     const [formData, setformData] = useState(
         { user: {
@@ -48,7 +57,7 @@ import { useNavigate } from "react-router-dom";
 
             if(res.status === 200){
                 toast.success("CreateEmployee Successfully");
-                naviagte("/");
+                navigate("/");
                 setformData({user: { email: "", password: "",  name: "", role: "", employee_type: ""}});
             }
 

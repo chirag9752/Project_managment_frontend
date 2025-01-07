@@ -14,6 +14,7 @@ export const fetchAllowedFeatures = createAsyncThunk( 'features/fetchAllowedFeat
           },
         }
       );
+      localStorage.setItem("current_user_feature",response.data.allowed_features);
       return response.data.allowed_features;
     }catch(error){
        return rejectedWithValues(error.response?.data || error.message);
