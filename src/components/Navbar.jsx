@@ -69,7 +69,7 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
             <div className="z-50 absolute left-[79%] top-[3%] my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
               <ul className="py-2">
               <li>
-                  <Link to={`/users/${currentUserId}`} 
+                  <Link to={`/users/details/${currentUserId}`} 
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                   >
                     {userName}

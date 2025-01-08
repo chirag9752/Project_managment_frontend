@@ -24,7 +24,6 @@ const CreateProjects = () => {
     }
   }, []);
 
-  
     const fetchEmailsFromBackend = async () => {
       try {
           const response = await axios.get("http://localhost:3000/users",
@@ -67,15 +66,38 @@ const CreateProjects = () => {
         if (!alreadyAdded) {
           setUserList((prevList) => [
             ...prevList,
-            { email: inputValue.trim(), timesheet: false, billing_access: false },
+            { email: inputValue.trim(), timesheet: false, billing_access: false , profile_name: ""},
           ]);
           setInputValue("");
+          setFilteredEmails([]);
         } else {
           toast.error("Email already added");
         }
         event.preventDefault();
       }
     };
+
+    const profilehandleKeyDown = (event , index) => {
+      if (event.key === 'Enter') {
+        const profile_value = event.target.value;
+        setUserList((prevList) =>
+          prevList.map((user, i) =>
+            i === index ? { ...user, profile_name: profile_value } : user
+          )
+        );
+      }
+    }
+
+    const profilechangehandler = (event, index) => {
+        const profile_value = event.target.value;
+        setUserList((prevList) =>
+          prevList.map((user, i) =>
+            i === index ? { ...user, profile_name: profile_value } : user
+          )
+        );
+    }
+
+    console.log("userLIst", userList);
 
     const toggleAccess = (index, type) => {
       setUserList((prevList) =>
@@ -99,7 +121,7 @@ const CreateProjects = () => {
     const handleRemoveTag = (indexToRemove) => {
       setUserList((prevTags) => prevTags.filter((_, index) => index !== indexToRemove));
     };
-    
+
     const CreateProjectHandler = async(event) => {
         event.preventDefault();
         
@@ -231,12 +253,21 @@ const CreateProjects = () => {
                         {user.billing_access ? "Billing" : "Billing"}
                       </button>
                       <button
-                      type="button"
-                      onClick={() => handleRemoveTag(index)}
-                      className="font-bold p-2 m-2 hover:text-white rounded-3xl bg-gray-300"
-                    >
+                        type="button"
+                        onClick={() => handleRemoveTag(index)}
+                        className="font-bold p-2 m-2 hover:text-white rounded-3xl bg-gray-300"
+                        >
                       x
                     </button>
+                    <div>
+                      <input
+                        type="text"
+                        onKeyDown={(event) => profilehandleKeyDown(event, index)}
+                        onChange={(event) => profilechangehandler(event, index)}
+                        placeholder="Search profile name"
+                        className="px-4 py-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      />
+                    </div>
                     </div>
                   </div>
                 ))}
