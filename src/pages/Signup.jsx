@@ -35,9 +35,6 @@ import { Link } from "react-router-dom";
                 withCredentials: true, // Required for cookies
             });
 
-            console.log(res.status);
-            
-
             if(res.status === 200){
                 toast.success("Signup Successfully");
                 localStorage.setItem("token" , res.data.token);

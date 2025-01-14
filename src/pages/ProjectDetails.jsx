@@ -112,8 +112,6 @@ const ProjectDetails = () => {
       </div>
        )}
 
-{console.log("------------------------------",projectData.data.project_users)}
-
        { open ? (<Dialog open = {open} onClose={setOpen} className="relative z-10">
         <DialogBackdrop
           transition

@@ -24,11 +24,10 @@ const Timesheet = () => {
   const location = useLocation();
   const { timesheetData, currentProfileId } = location.state || {};   // React Router attaches the state object to the location. useLocation gives access to this state object, which allows you to retrieve the data you passed during navigation.
   const [currentWeek, setCurrentWeek] = useState(new Date());
-  console.log("currentWeek",  currentWeek);
   const { weekStartDate, weekEndDate, year } = useCurrentWeekYear(currentWeek);
   const [CurrentWeekData, setCurrentWeekData] = useState(null);
   const navigate = useNavigate();
-  
+
   const handleHoursChange = (day, value) => {
     setHours((prev) => ({ ...prev, [day]: value }));
   };
@@ -52,15 +51,18 @@ const Timesheet = () => {
           withCredentials: true,
           }
       );
-  
+     
       if(response){
-        setCurrentWeekData(response.data.timesheet.daily_hours);
+        setCurrentWeekData(response.data?.timesheet?.daily_hours);
+        setDescription(response.data?.timesheet?.description);
       }else{
         setCurrentWeekData(null);
+        setDescription("");
       }
 
     }catch(error){
       setCurrentWeekData(null);
+      setDescription("");
        console.log(error.message)
     }
   }
@@ -87,6 +89,7 @@ const Timesheet = () => {
         Friday: "",
         Saturday: "",
         Sunday: "",});
+      setDescription("");
     }
   }, [weekStartDate, weekEndDate, CurrentWeekData]);
 
@@ -117,7 +120,7 @@ const Timesheet = () => {
       toast.success("Timesheet update successfully");
  
       }catch(error){
-        console.log(error.message);
+        toast.error(error.message);
       }
   };
 

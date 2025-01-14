@@ -37,7 +37,6 @@ import { useNavigate } from "react-router-dom";
         return response.data;
           
      } catch (error) {
-        console.log(error.message);
         toast.error(error.message);
         return [];
       }
@@ -54,7 +53,6 @@ import { useNavigate } from "react-router-dom";
         ))
       }
     }catch(error){
-      console.log(error);
       toast.error(error.message);
     }
   };

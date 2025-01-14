@@ -35,7 +35,6 @@ const CreateProjects = () => {
           );
           return response.data.data;
           } catch (error) {
-          console.log(error.message);
           toast.error(error.message);
           return [];
         }
@@ -148,15 +147,14 @@ const CreateProjects = () => {
             navigate("/");
           }
         }catch(err){
-            console.log("error in creating project");
             navigate("/");
             toast.error(err.message);
         }
     }
 
     return(
-        <div className="flex items-center justify-center h-screen min-h-screen bg-gray-100">
-        <div className="w-full max-w-4xl overflow-hidden bg-white rounded-md shadow-md">
+        <div className="flex items-center overflow-scroll justify-center h-auto min-h-screen bg-gray-100">
+        <div className="w-full max-w-4xl overflow-hidden mt-2 bg-white rounded-md shadow-md">
             {/* Form Section */}
             <div className="flex flex-col w-full h-full p-6 md:w-full">
               <div className="flex items-center justify-center mb-4">

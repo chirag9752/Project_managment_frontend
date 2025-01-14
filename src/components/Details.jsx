@@ -21,7 +21,6 @@ const UserProfileModal = () => {
                 setUserData(response.data);
             }catch(err){
                 setError(err);
-                console.log(err);
             }finally{
                 setLoading(false);
             }
