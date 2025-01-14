@@ -39,6 +39,7 @@ const UserProfileModal = () => {
 
   const user = {
     name: userData.data.name,
+    id: userData.data.id,
     email: userData.data.email,
     avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
     role: (userData.data.role ? userData.data.role : "Not-assigned"),
@@ -97,6 +98,7 @@ const UserProfileModal = () => {
                     <FaBuilding className="mr-2" />
                     <span>{user.subrole}</span>
                   </div>
+                  <span>ID: {user.id}</span>
                 </div>
               </div>
 

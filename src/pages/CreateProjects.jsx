@@ -62,18 +62,13 @@ const CreateProjects = () => {
 
     const handleKeyDown = (event) => {
       if (event.key === "Enter" && inputValue.trim()) {
-        const alreadyAdded = userList.some((user) => user.email === inputValue.trim());
-        if (!alreadyAdded) {
+        // const alreadyAdded = userList.some((user) => user.email === inputValue.trim());
           setUserList((prevList) => [
             ...prevList,
             { email: inputValue.trim(), timesheet: false, billing_access: false , profile_name: ""},
           ]);
           setInputValue("");
           setFilteredEmails([]);
-        } else {
-          toast.error("Email already added");
-        }
-        event.preventDefault();
       }
     };
 
@@ -88,7 +83,7 @@ const CreateProjects = () => {
       }
     }
 
-    const profilechangehandler = (event, index) => {
+    const profilechangehandler = async(event, index) => {
         const profile_value = event.target.value;
         setUserList((prevList) =>
           prevList.map((user, i) =>
@@ -96,8 +91,6 @@ const CreateProjects = () => {
           )
         );
     }
-
-    console.log("userLIst", userList);
 
     const toggleAccess = (index, type) => {
       setUserList((prevList) =>
@@ -124,9 +117,7 @@ const CreateProjects = () => {
 
     const CreateProjectHandler = async(event) => {
         event.preventDefault();
-        
         try{
-          const token = localStorage.getItem('token');
           const res = await axios.post("http://localhost:3000/users/execute_feature",
             {
               project:{
@@ -142,28 +133,29 @@ const CreateProjects = () => {
             {
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${tokenvalue}`
               },
               withCredentials: true,
             }
           );
             
-            if(res.status === 201){
-                toast.success("CreateProject Successfully");
-                setFormData({project:{ project_name: "",billing_rate: ""}});
-                navigate("/projects");
-            }else{
-              console.log(res.error);
-            }
-            
+          if(res.status === 201){
+              toast.success("CreateProject Successfully");
+              // setFormData({project:{ project_name: "",billing_rate: ""}});
+              navigate("/");
+          }else{
+            toast.error("error in creating project")
+            navigate("/");
+          }
         }catch(err){
             console.log("error in creating project");
-            toast.error(err);
+            navigate("/");
+            toast.error(err.message);
         }
     }
 
     return(
-        <div className="flex items-center justify-center h-full min-h-screen bg-gray-100">
+        <div className="flex items-center justify-center h-screen min-h-screen bg-gray-100">
         <div className="w-full max-w-4xl overflow-hidden bg-white rounded-md shadow-md">
             {/* Form Section */}
             <div className="flex flex-col w-full h-full p-6 md:w-full">
@@ -204,7 +196,6 @@ const CreateProjects = () => {
                 placeholder="Enter email"
                 className="w-[70%] mx-auto px-4 py-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
-           
               <div className="w-[70%] mx-auto px-4 py-3 mb-4 rounded-lg font-sans">
                 <div className="relative">
                   {/* Suggestions */}

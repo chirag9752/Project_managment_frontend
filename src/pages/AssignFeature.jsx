@@ -43,7 +43,6 @@ import { useNavigate } from "react-router-dom";
       }
     };
 
-  // Handle search for users
   const handleUserSearch = async(query) => {
     try{
       setUserSearch(query);
@@ -76,7 +75,6 @@ import { useNavigate } from "react-router-dom";
       }
     }
 
-  // Handle search for features
   const handleFeatureSearch = async(query) => {
     try{
       setFeatureSearch(query);
@@ -93,7 +91,6 @@ import { useNavigate } from "react-router-dom";
     }
   };
 
-  // Handle form submission
   const handleSubmit = async(e) => {
     e.preventDefault();
 

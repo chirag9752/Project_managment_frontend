@@ -1,50 +1,168 @@
-import { useState } from "react";
-import DatePicker from "react-datepicker";
+import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-// import "./styles.css"; // Add your custom styling if required
+import { useLocation, useNavigate } from "react-router-dom";
+import useCurrentWeekYear from "../components/UseCurrentWeekYear";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import toast from "react-hot-toast";
 
 const Timesheet = () => {
-    const [weekEnding, setWeekEnding] = useState(new Date());
-    const [hours, setHours] = useState({
-      Monday: "",
-      Tuesday: "",
-      Wednesday: "",
-      Thursday: "",
-      Friday: "",
-      Saturday: "",
-      Sunday: "",
-    });
-    const [description, setDescription] = useState("");
+  const [hours, setHours] = useState({
+    Monday: "",
+    Tuesday: "",
+    Wednesday: "",
+    Thursday: "",
+    Friday: "",
+    Saturday: "",
+    Sunday: "",
+  });
+
+  const token = localStorage.getItem('token');
+  const decodedToken = jwtDecode(token);
+  const currentUserId = parseInt(decodedToken.sub, 10);
+  const [description, setDescription] = useState("");
+  const location = useLocation();
+  const { timesheetData, currentProfileId } = location.state || {};   // React Router attaches the state object to the location. useLocation gives access to this state object, which allows you to retrieve the data you passed during navigation.
+  const [currentWeek, setCurrentWeek] = useState(new Date());
+  console.log("currentWeek",  currentWeek);
+  const { weekStartDate, weekEndDate, year } = useCurrentWeekYear(currentWeek);
+  const [CurrentWeekData, setCurrentWeekData] = useState(null);
+  const navigate = useNavigate();
   
-    const handleHoursChange = (day, value) => {
-      setHours((prev) => ({ ...prev, [day]: value }));
-    };
+  const handleHoursChange = (day, value) => {
+    setHours((prev) => ({ ...prev, [day]: value }));
+  };
+
+  const fetchweekData = async() => {
+    try{
+      const response = await axios.post("http://localhost:3000/timesheets/fetchsingletimesheet", 
+        {
+          WeekData: {
+            profile_Id: currentProfileId,
+            project_Id: timesheetData.id,
+            week_start_date: weekStartDate
+          },featureknown: {
+            userid: currentUserId
+          },
+        } ,{
+          headers: {
+            "content_Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+          }
+      );
   
-    const handleSubmit = () => {
-      console.log("Week Ending:", weekEnding);
-      console.log("Hours:", hours);
-      console.log("Description:", description);
-      alert("Timesheet submitted!");
-    };
-  
-    const handleSaveDraft = () => {
-      console.log("Draft saved:", { weekEnding, hours, description });
-      alert("Draft saved!");
-    };
+      if(response){
+        setCurrentWeekData(response.data.timesheet.daily_hours);
+      }else{
+        setCurrentWeekData(null);
+      }
+
+    }catch(error){
+      setCurrentWeekData(null);
+       console.log(error.message)
+    }
+  }
+
+  useEffect(() => {
+    fetchweekData();
+  }, [weekStartDate, weekEndDate]);
+
+  useEffect(() => {
+    if (CurrentWeekData) {
+      const updatedHours = { ...hours };
+      Object.entries(CurrentWeekData).forEach(([day, value]) => {
+        const capitalizedDay = day.charAt(0).toUpperCase() + day.slice(1); // Capitalize day name
+        if (Object.prototype.hasOwnProperty.call(updatedHours, capitalizedDay)) {
+          updatedHours[capitalizedDay] = value; // Set existing hours from CurrentWeekData
+        }
+      });
+      setHours(updatedHours);
+    }else{
+      setHours({Monday: "",
+        Tuesday: "",
+        Wednesday: "",
+        Thursday: "",
+        Friday: "",
+        Saturday: "",
+        Sunday: "",});
+    }
+  }, [weekStartDate, weekEndDate, CurrentWeekData]);
+
+  const handleSubmit = async() => {
+    try{
+      const response = await axios.post("http://localhost:3000/users/execute_feature",
+        {
+          WeekData: {
+            Hours: hours,
+            Description: description,
+            profile_Id: currentProfileId,
+            project_Id: timesheetData.id,
+            week_start_date: weekStartDate
+          },
+          featureknown: {
+            feature_name: "timesheets",
+            userid: currentUserId,
+          },
+        } ,{
+        headers: {
+          "content_Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+        }
+      );
+      setCurrentWeekData(response.data);
+      toast.success("Timesheet update successfully");
+ 
+      }catch(error){
+        console.log(error.message);
+      }
+  };
+
+  // Function to handle going to the next week
+  const nextWeek = () => {
+    const nextWeekStart = new Date(currentWeek);
+    nextWeekStart.setDate(currentWeek.getDate() + 7); // Move to the next week
+    setCurrentWeek(nextWeekStart);
+  };
+
+  // Function to handle going to the previous week
+  const prevWeek = () => {
+    const prevWeekStart = new Date(currentWeek);
+    prevWeekStart.setDate(currentWeek.getDate() - 7); // Move to the previous week
+    setCurrentWeek(prevWeekStart);
+  };
+
   
     return (
       <div className="max-w-4xl mx-auto mt-[4%] p-6 bg-gray-100 rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold text-center mb-6">Weekly Timesheet</h2>
+        <h2 className="text-2xl font-semibold text-center mb-6">Weekly Timesheet of [{timesheetData.name}]</h2>
   
-        {/* Week Ending */}
-        <div className="mb-6">
-          <label className="block font-medium mb-2">Week Ending:</label>
-          <DatePicker
-            selected={weekEnding}
-            onChange={(date) => setWeekEnding(date)}
-            dateFormat="dd MMM yyyy"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+        {/* Week status */}
+        
+        <div className="mb-6 flex justify-between">
+            <div className="flex gap-3 items-center">
+              <button 
+              className="bg-black text-white font-bold p-2 rounded-lg"
+              onClick={prevWeek}>&lt;
+              </button>
+
+                <label className="block font-medium">Week Starting:</label>
+                <p>{weekStartDate}</p>
+            </div>
+
+            <div className="pt-2">{year}</div>
+
+            <div className="flex gap-3">
+              <label className="block font-medium pt-2">Week Ending:</label>
+              <p className="pt-2">{weekEndDate}</p>
+              <button
+              className="bg-black text-white font-bold p-2 rounded-lg"
+              onClick={nextWeek}>&gt;
+              </button>
+            </div>
         </div>
   
         {/* Table */}
@@ -92,12 +210,6 @@ const Timesheet = () => {
         {/* Actions */}
         <div className="flex justify-between">
           <button
-            onClick={handleSaveDraft}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
-          >
-            Save Draft
-          </button>
-          <button
             onClick={handleSubmit}
             className="px-4 py-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600"
           >
@@ -105,7 +217,7 @@ const Timesheet = () => {
           </button>
           <button
             className="px-4 py-2 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600"
-            onClick={() => console.log("Canceled")}
+            onClick={() => navigate(-1)}
           >
             Cancel
           </button>

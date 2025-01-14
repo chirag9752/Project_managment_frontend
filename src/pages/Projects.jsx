@@ -14,16 +14,17 @@ const Projects = () => {
   const navigate = useNavigate();
 
   useEffect(()=> {
+
+    const currentUserFeature = localStorage.getItem('current_user_feature');
+    const featureAllowed = currentUserFeature.split(',');
+    const value = featureAllowed?.find((feature) => feature === "projects");
+    if(value !== "projects"){
+      navigate('/error');
+      return;
+    }
+
     const getProjects = async() => {
     try{
-        const currentUserFeature = localStorage.getItem('current_user_feature');
-        const featureAllowed = currentUserFeature.split(',');
-        const value = featureAllowed?.find((feature) => feature === "projects");
-        if(value !== "projects"){
-          navigate('/error');
-        }
-
-        // execute feature api
         const token = localStorage.getItem('token');
         const response = await axios.post("http://localhost:3000/users/execute_feature",
           {
