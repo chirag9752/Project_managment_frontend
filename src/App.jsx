@@ -3,7 +3,7 @@ import Login from './pages/Login'
 import Details from './components/Details'
 import Home from './pages/Home'
 import './App.css'
-import SignUp from './pages/Signup'
+// import SignUp from './pages/Signup'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
 import CreateEmployee from './pages/CreateEmployee'
@@ -97,7 +97,7 @@ function App() {
         } />
 
         <Route path='/login' element={<Login/>} />
-        <Route path='/signup' element={<SignUp/>} />
+        {/* <Route path='/signup' element={<SignUp/>} /> */}
         <Route path='/navbar' element={<Navbar/>} />
         <Route path='/error' element={<ErrorPage/>} />
       </Routes>

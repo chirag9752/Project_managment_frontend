@@ -3,9 +3,9 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { executeFeature } from "../components/apiService";
 
 const CreateProjects = () => {
-
   const navigate = useNavigate();
   const tokenvalue = localStorage.getItem('token');
   const decodedToken = jwtDecode(tokenvalue);
@@ -61,7 +61,6 @@ const CreateProjects = () => {
 
     const handleKeyDown = (event) => {
       if (event.key === "Enter" && inputValue.trim()) {
-        // const alreadyAdded = userList.some((user) => user.email === inputValue.trim());
           setUserList((prevList) => [
             ...prevList,
             { email: inputValue.trim(), timesheet: false, billing_access: false , profile_name: ""},
@@ -115,41 +114,33 @@ const CreateProjects = () => {
     };
 
     const CreateProjectHandler = async(event) => {
-        event.preventDefault();
-        try{
-          const res = await axios.post("http://localhost:3000/users/execute_feature",
-            {
-              project:{
-              project_name: formData.project.project_name,
-              billing_rate: formData.project.billing_rate,
-              user_List: userList
-              },
-              featureknown: {
-                feature_name: "createproject",
-                userid: userId,
-              },
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${tokenvalue}`
-              },
-              withCredentials: true,
-            }
-          );
-            
-          if(res.status === 201){
-              toast.success("CreateProject Successfully");
-              // setFormData({project:{ project_name: "",billing_rate: ""}});
-              navigate("/");
-          }else{
-            toast.error("error in creating project")
-            navigate("/");
+      event.preventDefault();
+      try{
+        const res = await executeFeature(
+          {
+             project:{
+             project_name: formData.project.project_name,
+             billing_rate: formData.project.billing_rate,
+             user_List: userList
+             },
+             featureknown: {
+               feature_name: "createproject",
+               userid: userId,
+             }
           }
-        }catch(err){
-            navigate("/");
-            toast.error(err.message);
+        )
+         
+        if(res.status.code === 201){
+          toast.success("CreateProject Successfully");
+          setFormData({project:{ project_name: "",billing_rate: ""}});
+          navigate("/");
+        }else{
+          toast.error("error in creating project")
+          navigate("/");
         }
+        }catch(err){
+          toast.error(err.response.data.errors);
+      }
     }
 
     return(
@@ -194,11 +185,11 @@ const CreateProjects = () => {
                 placeholder="Enter email"
                 className="w-[70%] mx-auto px-4 py-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
-              <div className="w-[70%] mx-auto px-4 py-3 mb-4 rounded-lg font-sans">
+              <div className="w-[73%] mx-auto px-4 py-3 mb-4 rounded-lg font-sans">
                 <div className="relative">
                   {/* Suggestions */}
                   {filteredEmails.length > 0 && (
-                    <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded shadow-md mt-1">
+                    <ul className="absolute rounded-md max-h-44 overflow-y-auto w-full bg-white border mx-auto border-gray-300 shadow-md">
                       {filteredEmails.map((user) => (
                         <li
                           key={user.email}

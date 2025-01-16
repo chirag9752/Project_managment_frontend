@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import useCurrentWeekYear from "../components/UseCurrentWeekYear";
-import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
+import { executeFeature, fetchSingleTimesheet } from "../components/apiService";
 
 const Timesheet = () => {
   const [hours, setHours] = useState({
@@ -34,7 +34,7 @@ const Timesheet = () => {
 
   const fetchweekData = async() => {
     try{
-      const response = await axios.post("http://localhost:3000/timesheets/fetchsingletimesheet", 
+      const response = await fetchSingleTimesheet(
         {
           WeekData: {
             profile_Id: currentProfileId,
@@ -42,19 +42,12 @@ const Timesheet = () => {
             week_start_date: weekStartDate
           },featureknown: {
             userid: currentUserId
-          },
-        } ,{
-          headers: {
-            "content_Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
           }
-      );
-     
+        }
+      )     
       if(response){
-        setCurrentWeekData(response.data?.timesheet?.daily_hours);
-        setDescription(response.data?.timesheet?.description);
+        setCurrentWeekData(response.timesheet?.daily_hours);
+        setDescription(response.timesheet?.description);
       }else{
         setCurrentWeekData(null);
         setDescription("");
@@ -63,7 +56,7 @@ const Timesheet = () => {
     }catch(error){
       setCurrentWeekData(null);
       setDescription("");
-       console.log(error.message)
+       console.log(error.response.data.errors)
     }
   }
 
@@ -95,46 +88,44 @@ const Timesheet = () => {
 
   const handleSubmit = async() => {
     try{
-      const response = await axios.post("http://localhost:3000/users/execute_feature",
+
+      if(description === "" || hours.Monday === "" || hours.Tuesday === "" || hours.Wednesday === "" || hours.Thursday === "" || hours.Friday === ""){
+        toast.error("all details are mendatory");
+        return;
+      }
+
+      const response = await executeFeature(
         {
-          WeekData: {
-            Hours: hours,
-            Description: description,
-            profile_Id: currentProfileId,
-            project_Id: timesheetData.id,
-            week_start_date: weekStartDate
-          },
-          featureknown: {
-            feature_name: "timesheets",
-            userid: currentUserId,
-          },
-        } ,{
-        headers: {
-          "content_Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true,
+         WeekData: {
+           Hours: hours,
+           Description: description,
+           profile_Id: currentProfileId,
+           project_Id: timesheetData.id,
+           week_start_date: weekStartDate
+         },
+         featureknown: {
+           feature_name: "timesheets",
+           userid: currentUserId,
+         }
         }
-      );
+      )
       setCurrentWeekData(response.data);
       toast.success("Timesheet update successfully");
  
       }catch(error){
-        toast.error(error.message);
+        toast.error(error.response.data.errors);
       }
   };
 
-  // Function to handle going to the next week
   const nextWeek = () => {
     const nextWeekStart = new Date(currentWeek);
-    nextWeekStart.setDate(currentWeek.getDate() + 7); // Move to the next week
+    nextWeekStart.setDate(currentWeek.getDate() + 7); 
     setCurrentWeek(nextWeekStart);
   };
 
-  // Function to handle going to the previous week
   const prevWeek = () => {
     const prevWeekStart = new Date(currentWeek);
-    prevWeekStart.setDate(currentWeek.getDate() - 7); // Move to the previous week
+    prevWeekStart.setDate(currentWeek.getDate() - 7);
     setCurrentWeek(prevWeekStart);
   };
 
@@ -213,10 +204,10 @@ const Timesheet = () => {
         {/* Actions */}
         <div className="flex justify-between">
           <button
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600"
-          >
-            Submit
+              onClick={handleSubmit}
+              className="px-4 py-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600"
+            >
+              Submit
           </button>
           <button
             className="px-4 py-2 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600"

@@ -1,10 +1,9 @@
-import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
-
 import { Dialog, DialogBackdrop, DialogPanel} from '@headlessui/react'
+import { fetchProjectDetails } from "../components/apiService";
 
 const ProjectDetails = () => {
 
@@ -18,24 +17,17 @@ const ProjectDetails = () => {
   const userId = parseInt(decodedToken.sub, 10);
   const navigate = useNavigate();
   const [currentProfileId, setCurrentProfileId] = useState(null);
-
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
     const fetchProjectData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:3000/projects/${id}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
-        });
-        setProjectData(response.data);
+        const response = await fetchProjectDetails(id);
+        setProjectData(response);
 
         // Extract user-specific project data after fetching project data
-        const userProject = response.data.data.project_users.find(
+        const userProject = response.data.project_users.find(
           (project) => project.user_id === userId
         );
 

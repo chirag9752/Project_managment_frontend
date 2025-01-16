@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { executeFeature } from "../components/apiService";
 
   const AssignFeature = () => {
   const [userId, setUserId] = useState("");
@@ -65,13 +66,13 @@ import { useNavigate } from "react-router-dom";
           Authorization: `Bearer ${token}`,
           }
         }
-        );
-        return response.data;
-        }catch(error){
-        toast.error(error.message);
-        return [];
-      }
+      );
+      return response.data;
+      }catch(error){
+      toast.error(error.message);
+      return [];
     }
+  }
 
   const handleFeatureSearch = async(query) => {
     try{
@@ -91,35 +92,28 @@ import { useNavigate } from "react-router-dom";
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-
     try{
-      const response = await axios.post("http://localhost:3000/users/execute_feature", 
-      {
+      const response = await executeFeature(
+        {
           assign_feature:{
-          user_id: userId,
-          feature_name: featureSearch
-        },
-        featureknown: {
-        feature_name: "assignfeature",
-         userid: currentUserId
-         }
-      },
-      {
-        headers: {
-        "Content-Type": "application/json",
-         Authorization: `Bearer ${token}`
-        },
-       withCredentials: true,
-      });
-
-      if(response.status === 201){
+            user_id: userId,
+            feature_name: featureSearch
+          },
+          featureknown: {
+            feature_name: "assignfeature",
+            userid: currentUserId
+          }
+        }
+      )
+      console.log("response", response);
+      if(response.status.code === 201){
         toast.success("Assigned feature Successfully");
         navigate("/");
         }else{
           console.log(response.error);
-        }
+      }
     }catch(error){
-       toast.error( error.response.data.errors);
+      toast.error(error.response.data.errors);
     }
   };
 
@@ -127,35 +121,28 @@ import { useNavigate } from "react-router-dom";
     e.preventDefault();
 
     try{
-      const response = await axios.post("http://localhost:3000/users/execute_feature", 
-      {
+      const response = await executeFeature(
+        {
           assign_feature:{
           user_id: userId,
           feature_name: featureSearch
-        },
-        featureknown: {
-        feature_name: "removefeature",
-         userid: currentUserId
-         }
-      },
-      {
-               headers: {
-        "Content-Type": "application/json",
-         Authorization: `Bearer ${token}`
-        },
-       withCredentials: true,
-      });
+         },
+         featureknown: {
+         feature_name: "removefeature",
+          userid: currentUserId
+          }
+        }
+      )
 
-      if(response.status === 201){
+      if(response.status.code === 201){
         toast.success("Removed feature Successfully");
         navigate("/");
         }else{
           console.log(response.error);
-        }
+       }
     }catch(error){
        toast.error(error.response.data.errors);
     }
-
   }
 
   return (

@@ -18,10 +18,7 @@ const Home = () => {
   const tokenvalue = localStorage.getItem('token');
   const decodedToken = jwtDecode(tokenvalue);
   const userId = parseInt(decodedToken.sub, 10);
-  // const BASE_URL = process.env.REACT_APP_BASE_URL;
-
   const dispatch = useDispatch();
-
   const {featureAllowed, error} = useSelector((state) => state.features);
 
   useEffect(() => {
@@ -143,8 +140,7 @@ const Home = () => {
           {users.map((user) => (
             <Link to={`/users/details/${user.id}`} 
               key={user.id}
-              className="p-4 transition-shadow bg-white rounded-lg shadow-lg hover:shadow-2xl"
-              
+              className="p-4 transition-shadow bg-white rounded-lg shadow-lg hover:shadow-2xl" 
             >
               <h2 className="text-xl font-semibold text-gray-800">
                 {user.name}

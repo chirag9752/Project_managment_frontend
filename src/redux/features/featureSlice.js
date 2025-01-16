@@ -1,23 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { checkUserFeature } from "../../components/apiService";
 
 export const fetchAllowedFeatures = createAsyncThunk( 'features/fetchAllowedFeatures',
   async(userId, {rejectedWithValues}) => {
     try{
-      const token = localStorage.getItem('token');
-      const response = await axios.post("http://localhost:3000/users/checkinguserfeature", 
-        {userid: userId},
-        {
-          headers:{
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      localStorage.setItem("current_user_feature",response.data.allowed_features);
-      return response.data.allowed_features;
+      const response = await checkUserFeature(userId);
+      localStorage.setItem("current_user_feature",response);
+      return response;
     }catch(error){
-       return rejectedWithValues(error.response?.data || error.message);
+      console.log(error);
+      return rejectedWithValues(error.response?.data || error.message);
     }
   }
   );

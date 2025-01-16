@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/authSlice";
 
@@ -32,16 +32,9 @@ import { login } from "../redux/authSlice";
     const LoginHandler = async (event) => {
       event.preventDefault();
       try {
-        const res = await axios.post("http://localhost:3000/login", formData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-            withCredentials: true,
-          });
+        const res = await axios.post("http://localhost:3000/login", formData);
           if (res.status === 200) {
             toast.success("Login Successfully");
-            // localStorage.setItem("token", res.data.token); // Updated token path
-            // localStorage.setItem("user", JSON.stringify(res.data.data.user)); // Updated user path
             const token = res.data.status.token;
             dispatch(login(token));
             navigate("/");
@@ -53,8 +46,8 @@ import { login } from "../redux/authSlice";
             if (status === 400) {
               toast.error("Please fill all the details");
             } else if (status === 404) {
-              toast.error("User not found. Please register first");
-              navigate("/signup");
+              toast.error("User not found. Please Contact HR");
+              // navigate("/signup");
             } else if (status === 401) {
               toast.error("Invalid email or password");
             } else {
@@ -122,12 +115,12 @@ import { login } from "../redux/authSlice";
                 Forgot password?
               </a>
   
-              <p className="mb-6 text-sm text-gray-500">
+              {/* <p className="mb-6 text-sm text-gray-500">
                 Do not have an account?{' '}
                 <Link to="/signup" className="text-blue-500 hover:underline">
                     Signup
                 </Link>
-              </p>
+              </p> */}
   
               <div className="flex justify-center space-x-4 text-sm text-gray-500">
                 <a href="#!" className="hover:underline">
