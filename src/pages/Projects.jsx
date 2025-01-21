@@ -33,10 +33,10 @@ const Projects = () => {
             }
           }
         )
-        setProjects(response.data);
+        setProjects(response.data.data);
         setLoading(false);
         }catch(error){
-        toast.error(error.response.data.errors);
+        toast.error(error.response.data.error);
         }
     }
 

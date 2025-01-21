@@ -2,7 +2,7 @@ import apiClient from "./apiClient";
 
 export const executeFeature = async (featureData) => {
   const response = await apiClient.post("/users/execute_feature", featureData);
-  return response.data;
+  return response;
 }
 
 export const checkUserFeature = async (userId) => {

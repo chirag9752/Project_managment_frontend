@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import config from "../components/contants/config.json";
 
   const CreateEmployee = () => {
   const navigate = useNavigate();
@@ -40,30 +41,29 @@ import { useNavigate } from "react-router-dom";
     event.preventDefault();
 
     if (!formData.user.email.trim() || !formData.user.password.trim() || !formData.user.name.trim()) {
-      toast.error("Please fill out all the fields before submitting.");
+      toast.error(config.Fill_all_details);
       return; 
     }
 
     try{
       const res = await axios.post("http://localhost:3000/signup", formData);
-
       if(res.status === 200){
-          toast.success("CreateEmployee Successfully");
+          toast.success(config.Create_employee);
           navigate("/");
           setformData({user: { email: "", password: "",  name: "", role: "", employee_type: ""}});
       }
 
     }catch(error){
       if (error.response) {
-          if (error.status === 422) {
-              toast.error("user already registered please check again");
-          } else {
-            toast.error(`${error.message}`);
-          }
+        if (error.status === 422) {
+          toast.error(config.Alredy_Registered);
         } else {
-          toast.error("Network error. Please check your connection.");
-          }
+          toast.error(`${error.message}`);
+        }
+      } else {
+        toast.error(config.Network_error);
       }
+    }
   }
 
   return (

@@ -1,0 +1,16 @@
+{
+    "Assigned_feature":"Feature assigned successfully",
+    "Removed_feature": "Remove feature successfully",
+    "Create_Project": "Created project successfully",
+    "Timesheet_update": "Timesheet updated successfully",
+    "Logout": "Logout successfully",
+    "Login": "Login successfully",
+    "Fill_Details": "Please fill all the details",
+    "Not_found_HR": "User not found please contact HR",
+    "Invalid_Login_Data": "Invalid email or password",
+    "Something_wrong": "Something went wrong and please try again",
+    "Network_error": "Network error. Please check your connection.",
+    "Fill_all_details": "Please fill out all the fields before submitting.",
+    "Create_employee": "Employee successfully created",
+    "Alredy_Registered": "user already registered please check again"
+}

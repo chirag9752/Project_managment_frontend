@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-// import { Link } from "react-router-dom";
+import config from "../components/contants/config.json";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/authSlice";
 
@@ -33,9 +33,10 @@ import { login } from "../redux/authSlice";
       event.preventDefault();
       try {
         const res = await axios.post("http://localhost:3000/login", formData);
+         console.log(res);
           if (res.status === 200) {
-            toast.success("Login Successfully");
-            const token = res.data.status.token;
+            toast.success(config.Login);
+            const token = res.data.token;
             dispatch(login(token));
             navigate("/");
             setformData({user: { email: "",password: ""}});
@@ -44,22 +45,21 @@ import { login } from "../redux/authSlice";
           if (error.response) {
             const { status } = error.response;
             if (status === 400) {
-              toast.error("Please fill all the details");
+              toast.error(config.Fill_Details);
             } else if (status === 404) {
-              toast.error("User not found. Please Contact HR");
+              toast.error(config.Not_found_HR);
               // navigate("/signup");
             } else if (status === 401) {
-              toast.error("Invalid email or password");
+              toast.error(config.Invalid_Login_Data);
             } else {
-              toast.error("Something went wrong. Please try again.");
+              toast.error(config.Something_wrong);
             }
           } else {
-            toast.error("Network error. Please check your connection.");
+            toast.error(config.Network_error);
           }
         }
       };
       
-
     return (
       <div className="flex items-center justify-center h-full min-h-screen bg-gray-100">
         <div className="w-full max-w-4xl overflow-hidden bg-white rounded-md shadow-md">

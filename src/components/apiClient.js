@@ -26,15 +26,15 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
     (response) => {
         return response;
-    }
-    // (error) => {
+    },
+    (error) => {
     //     if(error.response && error.response.status === 401){
     //         toast.error("Unauthorized please login again");
     //     } else {
     //         toast.error(error.response.data.message || 'An error occured');
     //     }
-    //     return Promise.reject(error);
-    // }
+        return Promise.reject(error);
+    }
 );
 
 export default apiClient;

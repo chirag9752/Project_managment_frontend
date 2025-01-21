@@ -5,6 +5,7 @@ import useCurrentWeekYear from "../components/UseCurrentWeekYear";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import { executeFeature, fetchSingleTimesheet } from "../components/apiService";
+import config from "../components/contants/config.json";
 
 const Timesheet = () => {
   const [hours, setHours] = useState({
@@ -56,7 +57,7 @@ const Timesheet = () => {
     }catch(error){
       setCurrentWeekData(null);
       setDescription("");
-       console.log(error.response.data.errors)
+       console.log(error.response.data.error)
     }
   }
 
@@ -110,10 +111,11 @@ const Timesheet = () => {
         }
       )
       setCurrentWeekData(response.data);
-      toast.success("Timesheet update successfully");
+      toast.success(config.Timesheet_update);
  
       }catch(error){
-        toast.error(error.response.data.errors);
+        console.log(error);
+        toast.error(error.response.data.error);
       }
   };
 

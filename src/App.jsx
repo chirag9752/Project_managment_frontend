@@ -14,6 +14,7 @@ import Dashboard from './pages/Dashboard'
 import AssignFeature from './pages/AssignFeature'
 import Timesheet from './pages/Timesheet'
 import ErrorPage from './pages/ErrorPage'
+import Bills from './pages/Billing'
 
 function App() {
  
@@ -57,6 +58,12 @@ function App() {
         </ProtectedRoute>} />
 
         <Route 
+        path="/timesheets" 
+        element={ <ProtectedRoute>
+          <Projects/>
+        </ProtectedRoute>} />
+
+        <Route 
         path="/createproject" 
         element={ 
           <ProtectedRoute>
@@ -93,6 +100,14 @@ function App() {
         element={
           <ProtectedRoute>
           <Timesheet/>
+         </ProtectedRoute>
+        } />
+
+        <Route 
+        path="/bills" 
+        element={
+          <ProtectedRoute>
+          <Bills/>
          </ProtectedRoute>
         } />
 

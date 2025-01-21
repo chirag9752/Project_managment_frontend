@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { executeFeature } from "../components/apiService";
+import config from "../components/contants/config.json";
 
   const AssignFeature = () => {
   const [userId, setUserId] = useState("");
@@ -105,21 +106,20 @@ import { executeFeature } from "../components/apiService";
           }
         }
       )
-      console.log("response", response);
-      if(response.status.code === 201){
-        toast.success("Assigned feature Successfully");
+      if(response.status === 200){
+        toast.success(config.Assigned_feature);
         navigate("/");
         }else{
           console.log(response.error);
       }
     }catch(error){
+      console.log(error);
       toast.error(error.response.data.errors);
     }
   };
 
   const RemoveAssignFeatureHandler = async(e) => {
     e.preventDefault();
-
     try{
       const response = await executeFeature(
         {
@@ -134,8 +134,8 @@ import { executeFeature } from "../components/apiService";
         }
       )
 
-      if(response.status.code === 201){
-        toast.success("Removed feature Successfully");
+      if(response.status === 200){
+        toast.success(config.Removed_feature);
         navigate("/");
         }else{
           console.log(response.error);

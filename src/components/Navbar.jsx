@@ -5,6 +5,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import config from "../components/contants/config.json";
 
 const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
   
@@ -28,14 +29,14 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
           },
       });
 
-      if (response.data.status === 200) {
-        toast.success("Logout Successfully");
+      if (response.status === 200) {
+        toast.success(config.Logout);
         localStorage.removeItem('token');
         navigate("/login");
       }
     } catch (error) {
       if (error.response) {
-        console.error('Error:', error.response.data.status.message);
+        console.error('Error:', error.response.data.status.error);
       } else {
         console.error('Network Error:', error.message);
       }

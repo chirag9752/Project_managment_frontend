@@ -55,11 +55,15 @@ const ProjectDetails = () => {
     setOpen(true);
   };
 
+  const navigatebillshandler = () => {
+    navigate('/bills')
+  }
+
   const timesheetHandler = (route, timesheetData, currentProfileId) => {
     console.log(timesheetData, currentProfileId);
     navigate(route ,{ state: { timesheetData , currentProfileId} });
   }
-  
+  console.log("projectData",  projectData);
   return (
     <div className="max-w-4xl p-6 mx-auto mt-10 bg-white rounded-lg shadow-lg">
     <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">Project Details</h2>
@@ -96,6 +100,7 @@ const ProjectDetails = () => {
           {
             billingaccess ? (<button
               className={`text-white px-4 py-2 rounded-md bg-green-500 hover:bg-green-600`}
+              onClick={() => navigatebillshandler()}
             >
               See Bills
             </button>) : (<></>)

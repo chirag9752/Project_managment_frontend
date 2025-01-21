@@ -1,9 +1,10 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { executeFeature } from "../components/apiService";
+import config from "../components/contants/config.json";
 
 const CreateProjects = () => {
   const navigate = useNavigate();
@@ -40,18 +41,24 @@ const CreateProjects = () => {
         }
     };
 
+    let debounceLate = useRef(null);
     const handleInputChange = async (event) => {
       const query = event.target.value;
-      setInputValue(query);
-      if (query.trim()) {
-        const emails = await fetchEmailsFromBackend();
-        const filtered = emails.filter((user) =>
-          user.email.toLowerCase().includes(query.toLowerCase())
-        );
-        setFilteredEmails(filtered);
-      } else {
-        setFilteredEmails([]);
-      }
+        setInputValue(query);
+        if (debounceLate.current) {
+          clearTimeout(debounceLate.current);
+        }    
+        debounceLate.current = setTimeout(async() => {
+        if (query.trim()) {
+          const emails = await fetchEmailsFromBackend();
+          const filtered = emails.filter((user) =>
+            user.email.toLowerCase().includes(query.toLowerCase())
+          );
+          setFilteredEmails(filtered);
+        } else {
+          setFilteredEmails([]);
+        }
+      }, 500);
     };
 
     const handleEmailSelect = (email) => {
@@ -118,24 +125,23 @@ const CreateProjects = () => {
       try{
         const res = await executeFeature(
           {
-             project:{
-             project_name: formData.project.project_name,
-             billing_rate: formData.project.billing_rate,
-             user_List: userList
-             },
-             featureknown: {
-               feature_name: "createproject",
-               userid: userId,
-             }
+            project:{
+            project_name: formData.project.project_name,
+            billing_rate: formData.project.billing_rate,
+            user_List: userList
+            },
+            featureknown: {
+              feature_name: "createproject",
+              userid: userId,
+            }
           }
         )
+
+        console.log(res);
          
-        if(res.status.code === 201){
-          toast.success("CreateProject Successfully");
+        if(res.status === 200){
+          toast.success(config.Create_Project);
           setFormData({project:{ project_name: "",billing_rate: ""}});
-          navigate("/");
-        }else{
-          toast.error("error in creating project")
           navigate("/");
         }
         }catch(err){
