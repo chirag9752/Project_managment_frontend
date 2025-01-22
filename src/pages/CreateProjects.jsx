@@ -25,41 +25,41 @@ const CreateProjects = () => {
     }
   }, []);
 
-    const fetchEmailsFromBackend = async () => {
-      try {
-          const response = await axios.get("http://localhost:3000/users",
-            {
-              headers: {
-                Authorization: `Bearer ${tokenvalue}`,
-                }
-            }
-          );
-          return response.data.data;
-          } catch (error) {
-          toast.error(error.message);
-          return [];
+  const fetchEmailsFromBackend = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/users",
+        {
+          headers: {
+            Authorization: `Bearer ${tokenvalue}`,
+          }
         }
-    };
+      );
+      return response.data.data;
+      } catch (error) {
+      toast.error(error.message);
+      return [];
+    }
+  };
 
-    let debounceLate = useRef(null);
-    const handleInputChange = async (event) => {
-      const query = event.target.value;
-        setInputValue(query);
-        if (debounceLate.current) {
-          clearTimeout(debounceLate.current);
-        }    
-        debounceLate.current = setTimeout(async() => {
-        if (query.trim()) {
-          const emails = await fetchEmailsFromBackend();
-          const filtered = emails.filter((user) =>
-            user.email.toLowerCase().includes(query.toLowerCase())
-          );
-          setFilteredEmails(filtered);
-        } else {
-          setFilteredEmails([]);
-        }
-      }, 500);
-    };
+  let debounceLate = useRef(null);
+  const handleInputChange = async (event) => {
+    const query = event.target.value;
+    setInputValue(query);
+    if (debounceLate.current) {
+      clearTimeout(debounceLate.current);
+    }    
+    debounceLate.current = setTimeout(async() => {
+    if (query.trim()) {
+      const emails = await fetchEmailsFromBackend();
+      const filtered = emails.filter((user) =>
+      user.email.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredEmails(filtered);
+    } else {
+      setFilteredEmails([]);
+      }
+    }, 500);
+  };
 
     const handleEmailSelect = (email) => {
       setInputValue(email);

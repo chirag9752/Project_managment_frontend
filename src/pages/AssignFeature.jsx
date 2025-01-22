@@ -1,6 +1,6 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { executeFeature } from "../components/apiService";
@@ -44,9 +44,14 @@ import config from "../components/contants/config.json";
       }
     };
 
+  let userSearchDealy = useRef(null);
   const handleUserSearch = async(query) => {
+    setUserSearch(query);
+    if(userSearchDealy.current){
+      clearTimeout(userSearchDealy.current);
+    }
+    userSearchDealy.current = setTimeout(async() => {
     try{
-      setUserSearch(query);
       const value = await Userarr();
       if (Array.isArray(value.data)) {
         setFilteredUsers(
@@ -56,7 +61,7 @@ import config from "../components/contants/config.json";
       }
     }catch(error){
       toast.error(error.message);
-    }
+    }  }, 500);
   };
 
   const featureAllowed = async() => {
@@ -74,21 +79,27 @@ import config from "../components/contants/config.json";
       return [];
     }
   }
-
+  
+  let featureDelay = useRef(null);
   const handleFeatureSearch = async(query) => {
-    try{
-      setFeatureSearch(query);
-      const value = await featureAllowed();
-      if (Array.isArray(value.data)) {
-        setFilteredFeatures(
-          value.data.filter((feature) =>
-            feature.feature_name.toLowerCase().includes(query.toLowerCase())
-          ))
-      }
-    }catch(error){
-       toast.error(error.message);
-       return [];
+    setFeatureSearch(query);
+    if(featureDelay.current){
+      clearTimeout(featureDelay.current);
     }
+    featureDelay.current = setTimeout(async() => {
+      try{
+        const value = await featureAllowed();
+        if (Array.isArray(value.data)) {
+          setFilteredFeatures(
+            value.data.filter((feature) =>
+              feature.feature_name.toLowerCase().includes(query.toLowerCase())
+            ))
+        }
+      }catch(error){
+         toast.error(error.message);
+         return [];
+      }
+    }, 500);
   };
 
   const handleSubmit = async(e) => {
