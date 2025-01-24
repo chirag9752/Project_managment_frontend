@@ -16,7 +16,8 @@ const ProjectDetails = () => {
   const decodedToken = jwtDecode(token);
   const userId = parseInt(decodedToken.sub, 10);
   const navigate = useNavigate();
-  const [currentProfileId, setCurrentProfileId] = useState(null);
+  const [seeBillingProfile, setseeBillingProfile] = useState(false);
+  // const [currentProfileId, setCurrentProfileId] = useState(null);
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
@@ -25,7 +26,6 @@ const ProjectDetails = () => {
         setLoading(true);
         const response = await fetchProjectDetails(id);
         setProjectData(response);
-
         // Extract user-specific project data after fetching project data
         const userProject = response.data.project_users.find(
           (project) => project.user_id === userId
@@ -34,7 +34,7 @@ const ProjectDetails = () => {
         if (userProject) {
           setTimesheet(userProject.timesheet);
           setBillingAccess(userProject.billing_access);
-          setCurrentProfileId(userProject.profile_id);
+          // setCurrentProfileId(userProject.profile_id);
         }
       } catch (error) {
         toast.error(error.message);
@@ -56,14 +56,18 @@ const ProjectDetails = () => {
   };
 
   const navigatebillshandler = () => {
-    navigate('/bills')
+    setseeBillingProfile(true);
   }
 
   const timesheetHandler = (route, timesheetData, currentProfileId) => {
     console.log(timesheetData, currentProfileId);
     navigate(route ,{ state: { timesheetData , currentProfileId} });
   }
-  console.log("projectData",  projectData);
+
+  const billingHandler = ( route, billingData, currentProfileId ) => {
+    navigate(route, {state: {billingData, currentProfileId} });
+  }
+
   return (
     <div className="max-w-4xl p-6 mx-auto mt-10 bg-white rounded-lg shadow-lg">
     <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">Project Details</h2>
@@ -81,8 +85,8 @@ const ProjectDetails = () => {
         <div className="flex gap-4 items-center">
           <span className="font-semibold text-gray-600">Users_Alloted :</span>
           [{
-           projectData.data.users.map((user) => (
-            <span key={user.id} className="text-gray-800">{user.name},</span>
+           projectData.data.users.map((user, index) => (
+            <span key={index} className="text-gray-800">{user.name},</span>
            ))
          }  ]
         </div>
@@ -98,6 +102,7 @@ const ProjectDetails = () => {
           }
 
           {
+            
             billingaccess ? (<button
               className={`text-white px-4 py-2 rounded-md bg-green-500 hover:bg-green-600`}
               onClick={() => navigatebillshandler()}
@@ -119,19 +124,55 @@ const ProjectDetails = () => {
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <DialogPanel
               transition
-              className="relative transform overflow-hidden rounded-lg bg-white text-center shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+              className="relative transform overflow-hidden rounded-lg bg-white text-center shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-sm data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
             >
-              <div className="bg-violet-800 cursor-pointer flex justify-end px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
-                   onClick={() => timesheetHandler(`/projects/${id}/timesheet`, projectData.data, currentProfileId)}>
-                  <div className="">
-                  { projectData && 
+              <div className="bg-violet-800 justify-center items-center cursor-pointer flex sm:flex sm:flex-row-reverse"
+                 >
+                  <div className="w-full p-2 mx-auto justify-center flex flex-wrap">
+                  { projectData &&
                     projectData.data.project_users.map((user_profile) => 
-                      user_profile.user_id === userId ? (
-                        <span key={user_profile.user_id}
-                        className="text-white font-bold"
+                      user_profile.user_id === userId && user_profile.timesheet ? (
+                        <li key={user_profile.profile_id}
+                        className="text-white p-2 hover:scale-125 justify-center text-center items-center font-bold flex w-full"
+                        onClick={() => timesheetHandler(`/projects/${id}/timesheet`, projectData.data, user_profile.profile_id)}
                         >
                           GO To {user_profile.profile_name}
-                        </span>
+                        </li>
+                      ) : null
+                    )
+                  }
+                </div> 
+              </div>
+            </DialogPanel>
+        </div>
+      </div>
+    </Dialog>) : (<></>)}
+
+
+    { seeBillingProfile ? (<Dialog open = {seeBillingProfile} onClose={setseeBillingProfile} className="relative z-10">
+        <DialogBackdrop
+          transition
+          className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+        />
+
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <DialogPanel
+              transition
+              className="relative transform overflow-hidden rounded-lg bg-white text-center shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-sm data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+            >
+              <div className="bg-violet-800 justify-center items-center cursor-pointer flex sm:flex sm:flex-row-reverse"
+                 >
+                  <div className="w-full p-2 mx-auto justify-center flex flex-wrap">
+                  { projectData &&
+                    projectData.data.project_users.map((user_profile) => 
+                      user_profile.user_id === userId && user_profile.billing_access ? (
+                        <li key={user_profile.profile_id}
+                        className="text-white p-2 hover:scale-125 justify-center text-center items-center font-bold flex w-full"
+                        onClick={() => billingHandler(`/projects/${id}/bills`, projectData.data, user_profile.profile_id)}
+                        >
+                          GO To {user_profile.profile_name}
+                        </li>
                       ) : null
                     )
                   }

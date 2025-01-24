@@ -59,7 +59,7 @@ import { login } from "../redux/authSlice";
           }
         }
       };
-      
+
     return (
       <div className="flex items-center justify-center h-full min-h-screen bg-gray-100">
         <div className="w-full max-w-4xl overflow-hidden bg-white rounded-md shadow-md">

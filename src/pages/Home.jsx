@@ -103,21 +103,13 @@ const Home = () => {
           <span className="sr-only">Close menu</span>
         </button>
         <ul className="py-4 space-y-2 font-medium text-center">
-          <li>
-            <Link to="#"
-              className="items-center block p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              Kanban
-            </Link>
-          </li>
-
           {
             featureAllowed.map((feature) =>
               isFeatureAllowed(feature) ? (
                 <li key={feature}>
                   <Link
                     to={`/${feature.toLowerCase()}`}
-                    className="block p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                    className="block hover:scale-105 p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                   {feature.replace(/([a-z])([A-Z])/g, '$1 $2')}
                   </Link>
@@ -140,7 +132,7 @@ const Home = () => {
           {users.map((user) => (
             <Link to={`/users/details/${user.id}`} 
               key={user.id}
-              className="p-4 transition-shadow bg-white rounded-lg shadow-lg hover:shadow-2xl" 
+              className="p-4  hover:scale-105 transition-shadow bg-white rounded-lg shadow-lg hover:shadow-2xl" 
             >
               <h2 className="text-xl font-semibold text-gray-800">
                 {user.name}

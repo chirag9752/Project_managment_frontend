@@ -6,9 +6,10 @@ import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import config from "../components/contants/config.json";
+import test from "../assets/baba.png"
 
 const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
-  
+
   const token = useSelector((state) => state.auth.token);
   const tokenvalue = localStorage.getItem('token');
   const decodedToken = jwtDecode(tokenvalue);
@@ -45,7 +46,7 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
 
   return (
     <nav className="relative bg-gray-200 border-gray-200 dark:bg-gray-900">
-      <div className="flex flex-wrap items-center justify-between p-10 mx-auto max-w-screen-2xl">
+      <div className="flex flex-wrap items-center justify-between p-5 mx-auto max-w-screen-2xl">
         <a className="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="https://flowbite.com/docs/images/logo.svg" onClick={toggleDrawer} className="h-8 hover:cursor-pointer" alt="Flowbite Logo" />
           <span className="self-center text-2xl font-semibold hover:cursor-pointer whitespace-nowrap dark:text-white" 
@@ -54,18 +55,20 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
           </span>
         </a>
         <div className="flex items-center space-x-3 md:order-2 md:space-x-0 rtl:space-x-reverse">
+
           <button
             type="button"
-            className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-8 focus:ring-gray-100 dark:focus:ring-gray-600"
+            className="flex text-sm bg-black rounded-full md:me-0 focus:ring-8 focus:ring-gray-100 dark:focus:ring-gray-600"
             onClick={toggleDropdown}
           >
             <span className="sr-only">Open user menu</span>
             <img
-              className="w-10 h-10 rounded-full"
-              src="/docs/images/people/profile-picture-3.jpg"
+              className="w-20 h-20 rounded-full"
+              src={test}
               alt="user photo"
             />
           </button>
+
           {dropdownVisible && (
             <div className="z-50 absolute left-[79%] top-[3%] my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
               <ul className="py-2">
@@ -126,13 +129,14 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
             menuVisible ? "block" : "hidden"
           } w-full md:flex md:w-auto md:order-1`}
         >
-          <ul className="flex flex-col p-4 mt-4 font-medium border border-gray-100 rounded-lg md:p-0 bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-gray-200 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+          <ul className="flex flex-col p-4 mt-4 font-extrabold border border-gray-100 rounded-lg md:p-0 bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-gray-200 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
             <li>
               <Link to="/"
-                className="block px-3 font-bold py-2 text-white bg-blue-600 rounded md:bg-transparent md:text-blue-600 md:p-0 md:dark:text-blue-500"
                 aria-current="page"
               >
-                Employees
+                <div className="block px-3 font-extrabold py-2 text-blue-600 rounded md:bg-transparent md:text-blue-600 md:p-0 md:dark:text-blue-500">
+                  Employees
+                </div>
               </Link>
             </li>
           </ul>

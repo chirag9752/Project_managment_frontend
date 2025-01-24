@@ -17,7 +17,7 @@ import ErrorPage from './pages/ErrorPage'
 import Bills from './pages/Billing'
 
 function App() {
- 
+
   return (
     <div>
       <Routes>
@@ -104,7 +104,7 @@ function App() {
         } />
 
         <Route 
-        path="/bills" 
+        path="/projects/:id/bills" 
         element={
           <ProtectedRoute>
           <Bills/>

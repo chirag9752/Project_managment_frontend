@@ -1,9 +1,8 @@
-import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { executeFeature } from "../components/apiService";
+import { executeFeature, fetchUsers } from "../components/apiService";
 import config from "../components/contants/config.json";
 
 const CreateProjects = () => {
@@ -27,13 +26,7 @@ const CreateProjects = () => {
 
   const fetchEmailsFromBackend = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/users",
-        {
-          headers: {
-            Authorization: `Bearer ${tokenvalue}`,
-          }
-        }
-      );
+      const response = await fetchUsers();
       return response.data.data;
       } catch (error) {
       toast.error(error.message);

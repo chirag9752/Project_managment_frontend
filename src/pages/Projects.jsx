@@ -14,7 +14,6 @@ const Projects = () => {
   const navigate = useNavigate();
 
   useEffect(()=> {
-
     const currentUserFeature = localStorage.getItem('current_user_feature');
     const featureAllowed = currentUserFeature.split(',');
     const value = featureAllowed?.find((feature) => feature === "projects");
@@ -24,7 +23,7 @@ const Projects = () => {
     }
 
     const getProjects = async() => {
-    try{
+      try{
         const response = await executeFeature(
           {
             featureknown: {
@@ -37,7 +36,7 @@ const Projects = () => {
         setLoading(false);
         }catch(error){
         toast.error(error.response.data.error);
-        }
+      }
     }
 
     getProjects();

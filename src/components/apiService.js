@@ -17,7 +17,17 @@ export const fetchProjectDetails = async (projectId) => {
 };
   
   // Timesheet-related APIs
-  export const fetchSingleTimesheet = async (timesheetData) => {
-    const response = await apiClient.post("/timesheets/fetchsingletimesheet", timesheetData);
-    return response.data;
-  };
+export const fetchSingleTimesheet = async (timesheetData) => {
+  const response = await apiClient.post("/timesheets/fetchsingletimesheet", timesheetData);
+  return response.data;
+};
+
+export const signUpUser = async(formdata) => {
+  const response = await apiClient.post('/signup', formdata);
+  return response;
+}
+
+export const fetchUsers = async() => {
+  const response = await apiClient.get('/users');
+  return response;
+}

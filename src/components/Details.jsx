@@ -11,7 +11,6 @@ const UserProfileModal = () => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [error , setError] = useState(null);
-  const [flag, setflag] = useState(false);
 
   useEffect(() => {
     const fetchUser = async() => {
@@ -49,10 +48,6 @@ const UserProfileModal = () => {
 
   const clickHandler = () => {
     navigate('/');
-  }
-
-  const HandleDetails = () => {
-    setflag(prev => (!prev));
   }
 
   return (
@@ -102,18 +97,6 @@ const UserProfileModal = () => {
               </div>
 
               <div className="mt-8">
-
-                { userData.projects.length != 0 ?  (<div className="flex gap-[70%] justify-center mb-5">
-                    <h4 className="text-xl pt-3 font-semibold text-gray-700">Recent Projects</h4>
-                    <button
-                          onClick={HandleDetails}
-                          className=" bg-blue-500 rounded-lg text-white hover:text-black p-3 transition duration-300 ease-in-out">
-                            {
-                              flag === true ? ("Hide details") : ("View details")
-                            }
-                    </button>
-                </div>) : (<div></div>)}
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {user.activities.map((project) => (
                     <div
@@ -121,11 +104,6 @@ const UserProfileModal = () => {
                       className="bg-gray-100 p-4 rounded-lg shadow hover:shadow-md transition duration-300 ease-in-out"
                     >
                       <p className="text-gray-800 font-medium">{project.project_name}</p>
-                      { flag === true ? (
-                        <p className="text-gray-600 text-sm mt-1">{project.billing_rate}</p>
-                      ) : (
-                        <div></div>
-                      ) }
                     </div>
                   ))}
                 </div>

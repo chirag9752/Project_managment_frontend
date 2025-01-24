@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import config from "../components/contants/config.json";
+import { signUpUser } from "../components/apiService";
 
   const CreateEmployee = () => {
   const navigate = useNavigate();
@@ -46,7 +46,8 @@ import config from "../components/contants/config.json";
     }
 
     try{
-      const res = await axios.post("http://localhost:3000/signup", formData);
+      const res = await signUpUser(formData);
+      console.log("response", res);
       if(res.status === 200){
           toast.success(config.Create_employee);
           navigate("/");
@@ -87,7 +88,7 @@ import config from "../components/contants/config.json";
             </div>
   
             <h5 className="mb-6 text-lg tracking-wider text-center text-gray-600">
-              Hey! HR create a new hire? 👋
+              Hey! Buddy create a new hire? 👋
             </h5>
 
             <input
