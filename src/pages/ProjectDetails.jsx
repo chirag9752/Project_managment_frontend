@@ -63,8 +63,8 @@ const ProjectDetails = () => {
     navigate(route ,{ state: { timesheetData , currentProfileId} });
   }
 
-  const billingHandler = ( route, billingData, currentProfileId ) => {
-    navigate(route, {state: {billingData, currentProfileId} });
+  const billingHandler = ( route, timesheetData, currentProfileId ) => {
+    navigate(route, {state: {timesheetData, currentProfileId} });
   }
 
   return (

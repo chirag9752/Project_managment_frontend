@@ -53,7 +53,6 @@ const Timesheet = () => {
         setCurrentWeekData(null);
         setDescription("");
       }
-
     }catch(error){
       setCurrentWeekData(null);
       setDescription("");
