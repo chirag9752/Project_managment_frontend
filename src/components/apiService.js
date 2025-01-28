@@ -31,3 +31,8 @@ export const fetchUsers = async() => {
   const response = await apiClient.get('/users');
   return response;
 }
+
+export const logoutUsers = async() => {
+  const response = await apiClient.delete('/logout');
+  return response;
+}

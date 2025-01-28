@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import config from "../components/contants/config.json";
 import { signUpUser } from "../components/apiService";
+import employee from "../assets/employoooo.png"
 
   const CreateEmployee = () => {
   const navigate = useNavigate();
@@ -69,16 +70,8 @@ import { signUpUser } from "../components/apiService";
 
   return (
     <div className="flex items-center justify-center h-full min-h-screen bg-gray-100">
-      <div className="w-full max-w-4xl overflow-hidden bg-white rounded-md shadow-md">
+      <div className="w-full max-w-6xl overflow-hidden bg-gray-50 border shadow-2xl rounded-md">
         <div className="flex flex-wrap">
-          <div className="w-full md:w-1/2">
-            <img
-              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp"
-              alt="login form"
-              className="object-cover w-full h-full"
-              />
-          </div>
-  
           <div className="flex flex-col w-full h-full p-6 md:w-1/2">
             <div className="flex items-center justify-center mb-4">
               <div className="mr-3 text-4xl text-orange-500">
@@ -92,7 +85,7 @@ import { signUpUser } from "../components/apiService";
             </h5>
 
             <input
-              className="w-full px-4 py-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 h-14 py-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               type="name"
               placeholder="Enter your name..."
               name="name"
@@ -101,7 +94,7 @@ import { signUpUser } from "../components/apiService";
             />
 
             <input
-              className="w-full px-4 py-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 h-14 py-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               type="email"
               placeholder="Email address"
               name="email"
@@ -110,7 +103,7 @@ import { signUpUser } from "../components/apiService";
             />
               
             <input
-              className="w-full px-4 py-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 h-14 py-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               type="password"
               placeholder="set Password"
               name="password"
@@ -118,11 +111,11 @@ import { signUpUser } from "../components/apiService";
               onChange={Handlerfunction}
             />
               
-            <div className="p-4">
+            <div className="">
               <div className="flex flex-row items-center gap-3 mb-4">
                 <label className="block mb-2 font-medium text-gray-700">Role</label>
                 <select
-                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full px-4 py-3 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                     name="role"
                     value={formData.user.role}
                     onChange={Handlerfunction}
@@ -141,7 +134,7 @@ import { signUpUser } from "../components/apiService";
                   <div className="flex flex-row items-center gap-3 mb-4">
                     <label className="block mb-2 font-medium text-gray-700">Type</label>
                     <select
-                      className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full px-4 py-3 h-14 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                       name="employee_type"
                       value={formData.user.employee_type}
                       onChange={Handlerfunction}
@@ -160,11 +153,18 @@ import { signUpUser } from "../components/apiService";
                 )
                 }
             </div>
-            <button className="w-full px-5 py-3 mb-4 text-white bg-gray-800 rounded-lg hover:bg-gray-900"
+            <button className="w-full h-14 px-5 py-3 mb-4 text-white bg-gray-800 rounded-lg hover:bg-gray-900"
               onClick={CreateEmployeeHandler}>
                 CreateEmployee
             </button>
-            </div>
+          </div>
+          <div className="w-full md:w-1/2">
+            <img
+              src = {employee}
+              alt="login form"
+              className="object-cover w-full h-full"
+              />
+          </div>
           </div>
         </div>
       </div>

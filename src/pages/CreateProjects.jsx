@@ -207,10 +207,19 @@ const CreateProjects = () => {
                 {userList.map((user, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-4 mb-2 bg-gray-100 border border-gray-300 rounded"
+                    className="flex flex-wrap items-center justify-center p-4 mb-2 bg-gray-100 border border-gray-300 rounded"
                   >
                     <span className="text-gray-700">{user.email}</span>
-                    <div className="space-x-2">
+                    <div className="gap-4 flex flex-wrap items-center justify-center">
+                      <div>
+                        <input
+                          type="text"
+                          onKeyDown={(event) => profilehandleKeyDown(event, index)}
+                          onChange={(event) => profilechangehandler(event, index)}
+                          placeholder="Search profile name"
+                          className="px-4 py-3 mt-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        />
+                      </div>
                       <button
                         onClick={() => toggleAccess(index, "timesheet")}
                         className={`px-3 py-1 rounded ${
@@ -237,16 +246,8 @@ const CreateProjects = () => {
                         className="font-bold p-2 m-2 hover:text-white rounded-3xl bg-gray-300"
                         >
                       x
-                    </button>
-                    <div>
-                      <input
-                        type="text"
-                        onKeyDown={(event) => profilehandleKeyDown(event, index)}
-                        onChange={(event) => profilechangehandler(event, index)}
-                        placeholder="Search profile name"
-                        className="px-4 py-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      />
-                    </div>
+                      </button>
+                    
                     </div>
                   </div>
                 ))}

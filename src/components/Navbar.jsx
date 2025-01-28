@@ -1,12 +1,12 @@
 import { useState } from "react";
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import config from "../components/contants/config.json";
 import test from "../assets/baba.png"
+import { logoutUsers } from "./apiService";
 
 const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
 
@@ -21,16 +21,9 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
 
   const logoutHandler = async () => {
     try {
-      const token = localStorage.getItem('token');
-      localStorage.removeItem('current_user_feature');
-      
-      const response = await axios.delete('http://localhost:3000/logout', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          },
-      });
-
+      const response = await logoutUsers();
       if (response.status === 200) {
+        localStorage.removeItem('current_user_feature');
         toast.success(config.Logout);
         localStorage.removeItem('token');
         navigate("/login");
@@ -72,7 +65,7 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
           {dropdownVisible && (
             <div className="z-50 absolute left-[79%] top-[3%] my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
               <ul className="py-2">
-              <li>
+                <li>
                   <Link to={`/users/details/${currentUserId}`} 
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                   >
@@ -87,7 +80,6 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
                     Settings
                   </Link>
                 </li>
-                
                 {
                   token ? ( <li>
                     <div onClick= {logoutHandler}
@@ -96,8 +88,7 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
                       Sign out
                     </div>
                   </li> ) : ( <div></div> )
-                }
-               
+                }         
               </ul>
             </div>
           )}

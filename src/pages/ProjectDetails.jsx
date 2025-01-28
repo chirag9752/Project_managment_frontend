@@ -60,7 +60,6 @@ const ProjectDetails = () => {
   }
 
   const timesheetHandler = (route, timesheetData, currentProfileId) => {
-    console.log(timesheetData, currentProfileId);
     navigate(route ,{ state: { timesheetData , currentProfileId} });
   }
 
