@@ -17,7 +17,6 @@ const ProjectDetails = () => {
   const userId = parseInt(decodedToken.sub, 10);
   const navigate = useNavigate();
   const [seeBillingProfile, setseeBillingProfile] = useState(false);
-  // const [currentProfileId, setCurrentProfileId] = useState(null);
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
@@ -26,7 +25,6 @@ const ProjectDetails = () => {
         setLoading(true);
         const response = await fetchProjectDetails(id);
         setProjectData(response);
-        // Extract user-specific project data after fetching project data
         const userProject = response.data.project_users.find(
           (project) => project.user_id === userId
         );
