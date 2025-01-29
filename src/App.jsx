@@ -15,6 +15,7 @@ import AssignFeature from './pages/AssignFeature'
 import Timesheet from './pages/Timesheet'
 import ErrorPage from './pages/ErrorPage'
 import Bills from './pages/Billing'
+import PurchasePremiumSection from './pages/PurchasePremiumSection'
 
 function App() {
 
@@ -108,6 +109,14 @@ function App() {
         element={
           <ProtectedRoute>
           <Bills/>
+         </ProtectedRoute>
+        } />
+
+        <Route 
+        path="/projects/purchase/premium" 
+        element={
+          <ProtectedRoute>
+          <PurchasePremiumSection/>
          </ProtectedRoute>
         } />
 

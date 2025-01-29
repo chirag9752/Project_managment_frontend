@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "../App.css";
 import Navbar from "../components/Navbar";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +19,7 @@ const Home = () => {
   const decodedToken = jwtDecode(tokenvalue);
   const userId = parseInt(decodedToken.sub, 10);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {featureAllowed, error} = useSelector((state) => state.features);
 
   useEffect(() => {
@@ -34,12 +35,16 @@ const Home = () => {
   const isFeatureAllowed = (featureName) => {
     return featureAllowed.includes(featureName);
   }
+
+  const GoToPremiumHandler = () => {
+    navigate("/projects/purchase/premium");
+  }
   
   useEffect(() => {
     const fetchData = async() => {
       try{
         setLoading(true);
-        const response = await axios.get("http://localhost:3000/users");
+        const response = await axios.get("https://gg9bb6pv-3000.inc1.devtunnels.ms/users");
         setLoading(false);
         setUsers(response.data.data);
       }catch(error){
@@ -80,46 +85,58 @@ const Home = () => {
       <div
         className={`drawer ${isDrawerOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <h5 className="p-3 text-base font-semibold text-center text-white uppercase bg-blue-900 dark:text-gray-400">
-          Features
-        </h5>
-        <button
-          onClick={toggleDrawer}
-          className="close-btn text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 dark:hover:bg-gray-600 dark:hover:text-white"
-        >
-          <svg
-            aria-hidden="true"
-            className="w-5 h-5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span className="sr-only">Close menu</span>
-        </button>
-        <ul className="py-4 space-y-2 font-medium text-center">
-          {
-            featureAllowed.map((feature) =>
-              isFeatureAllowed(feature) ? (
-                <li key={feature}>
-                  <Link
-                    to={`/${feature.toLowerCase()}`}
-                    className="block hover:scale-105 p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                  {feature.replace(/([a-z])([A-Z])/g, '$1 $2')}
-                  </Link>
-                </li>
-              ) : null
-            )
-          }
-        </ul>
+        <div className="flex flex-col justify-between h-[98%]">
+
+          <div>
+            <h5 className="p-3 text-base font-semibold text-center text-white uppercase bg-blue-900 dark:text-gray-400">
+              Features
+            </h5>
+            <button
+              onClick={toggleDrawer}
+              className="close-btn text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 dark:hover:bg-gray-600 dark:hover:text-white"
+            >
+              <svg
+                aria-hidden="true"
+                className="w-5 h-5"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span className="sr-only">Close menu</span>
+            </button>
+            <ul className="py-4 space-y-2 font-medium text-center">
+              {
+                featureAllowed.map((feature) =>
+                  isFeatureAllowed(feature) ? (
+                    <li key={feature}>
+                      <Link
+                        to={`/${feature.toLowerCase()}`}
+                        className="block p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                      {feature.replace(/([a-z])([A-Z])/g, '$1 $2')}
+                      </Link>
+                    </li>
+                  ) : null
+                )
+              }
+            </ul>
+          </div>
+
+          <div className="items-center justify-center flex">
+             <button 
+             onClick={GoToPremiumHandler}
+             className="p-3 hover:bg-slate-500 w-[70%] text-base rounded-lg font-bold text-center text-white uppercase bg-blue-500 dark:text-gray-400"
+             >Go-Premium</button>
+          </div>
+        </div>
       </div>
-      
+
       {/* ALL Employees */}
       
       <div className="min-h-screen p-5 bg-gray-100">
