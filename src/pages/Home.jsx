@@ -39,12 +39,12 @@ const Home = () => {
   const GoToPremiumHandler = () => {
     navigate("/projects/purchase/premium");
   }
-  
+
   useEffect(() => {
     const fetchData = async() => {
       try{
         setLoading(true);
-        const response = await axios.get("https://gg9bb6pv-3000.inc1.devtunnels.ms/users");
+        const response = await axios.get("http://localhost:3000/users");
         setLoading(false);
         setUsers(response.data.data);
       }catch(error){
@@ -52,10 +52,9 @@ const Home = () => {
         console.log("error in fetching all users data", error.message);
       }
     };
-    
     fetchData();
   }, []);
-  
+
   return (
     <div className="App">
       {/* Navbar */}
@@ -83,10 +82,8 @@ const Home = () => {
 
       {/* Drawer */}
       <div
-        className={`drawer ${isDrawerOpen ? "translate-x-0" : "-translate-x-full"}`}
-      >
+        className={`drawer ${isDrawerOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="flex flex-col justify-between h-[98%]">
-
           <div>
             <h5 className="p-3 text-base font-semibold text-center text-white uppercase bg-blue-900 dark:text-gray-400">
               Features
@@ -113,13 +110,13 @@ const Home = () => {
             <ul className="py-4 space-y-2 font-medium text-center">
               {
                 featureAllowed.map((feature) =>
-                  isFeatureAllowed(feature) ? (
+                  feature !== "print_pdf" && isFeatureAllowed(feature) ? (
                     <li key={feature}>
                       <Link
                         to={`/${feature.toLowerCase()}`}
-                        className="block p-2 text-gray-900 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                        className="block p-2 text-gray-900 rounded hover:bg-gray-300 dark:hover:bg-gray-700"
                       >
-                      {feature.replace(/([a-z])([A-Z])/g, '$1 $2')}
+                        {feature.replace(/([a-z])([A-Z])/g, '$1 $2')}
                       </Link>
                     </li>
                   ) : null
@@ -131,7 +128,7 @@ const Home = () => {
           <div className="items-center justify-center flex">
              <button 
              onClick={GoToPremiumHandler}
-             className="p-3 hover:bg-slate-500 w-[70%] text-base rounded-lg font-bold text-center text-white uppercase bg-blue-500 dark:text-gray-400"
+             className="p-3 hover:bg-slate-500 w-[70%] text-base rounded-lg font-bold text-center text-white uppercase bg-blue-600 dark:text-gray-400"
              >Go-Premium</button>
           </div>
         </div>

@@ -8,6 +8,7 @@ import config from "../components/contants/config.json";
 import assignimage from "../assets/assignfeaturepage.png"
 
   const AssignFeature = () => {
+
   const [userId, setUserId] = useState("");
   const [featureId, setFeatureId] = useState("");
   const [userSearch, setUserSearch] = useState("");
@@ -21,14 +22,15 @@ import assignimage from "../assets/assignfeaturepage.png"
 
   useEffect(()=> {
     const currentUserFeature = localStorage.getItem('current_user_feature');
-    const featureAllowed = currentUserFeature.split(',');
-    const value = featureAllowed?.find((feature) => feature === "assignfeature");
-    if(value !== "assignfeature"){
+    const current_user_feature_allowed = currentUserFeature.split(',');
+    const value = current_user_feature_allowed?.find((feature) => feature === "assignfeature");
+    const value2 = current_user_feature_allowed?.find((feature) => feature === "removefeature");
+    if(value !== "assignfeature" && value2 !== "removefeature"){
       navigate('/error');
     }
   }, []);
- 
-    const Userarr = async () => {
+
+  const Userarr = async () => {
     try {
         const response = await axios.get("http://localhost:3000/users",
           {
@@ -38,7 +40,6 @@ import assignimage from "../assets/assignfeaturepage.png"
           }
         );
         return response.data;
-          
      } catch (error) {
         toast.error(error.message);
         return [];
@@ -62,7 +63,7 @@ import assignimage from "../assets/assignfeaturepage.png"
       }
     }catch(error){
       toast.error(error.message);
-    }  }, 500);
+    }  }, 400);
   };
 
   const featureAllowed = async() => {
@@ -74,13 +75,14 @@ import assignimage from "../assets/assignfeaturepage.png"
           }
         }
       );
+      // const filteredArray = response.filter(obj => obj.feature_name !== 'print_pdf');
       return response.data;
       }catch(error){
       toast.error(error.message);
       return [];
     }
   }
-  
+
   let featureDelay = useRef(null);
   const handleFeatureSearch = async(query) => {
     setFeatureSearch(query);
@@ -89,10 +91,14 @@ import assignimage from "../assets/assignfeaturepage.png"
     }
     featureDelay.current = setTimeout(async() => {
       try{
-        const value = await featureAllowed();
-        if (Array.isArray(value.data)) {
+        const value1 = await featureAllowed();
+        console.log("value1",value1);
+        const value = value1.data.filter(obj => obj.feature_name !== 'print_pdf');
+        console.log("value",value);
+
+        if (Array.isArray(value)) {
           setFilteredFeatures(
-            value.data.filter((feature) =>
+            value.filter((feature) =>
               feature.feature_name.toLowerCase().includes(query.toLowerCase())
             ))
         }
@@ -100,7 +106,7 @@ import assignimage from "../assets/assignfeaturepage.png"
          toast.error(error.message);
          return [];
       }
-    }, 500);
+    }, 400);
   };
 
   const handleSubmit = async(e) => {
@@ -110,7 +116,7 @@ import assignimage from "../assets/assignfeaturepage.png"
         {
           assign_feature:{
             user_id: userId,
-            feature_name: featureSearch
+            feature_name: featureSearch === 'print_pdf' ? ((null)) : (featureSearch)
           },
           featureknown: {
             feature_name: "assignfeature",
@@ -125,7 +131,6 @@ import assignimage from "../assets/assignfeaturepage.png"
           console.log(response.error);
       }
     }catch(error){
-      console.log(error);
       toast.error(error.response.data.errors);
     }
   };
@@ -137,7 +142,7 @@ import assignimage from "../assets/assignfeaturepage.png"
         {
           assign_feature:{
           user_id: userId,
-          feature_name: featureSearch
+          feature_name: featureSearch === 'print_pdf' ? ((null)) : (featureSearch)
          },
          featureknown: {
          feature_name: "removefeature",

@@ -192,9 +192,6 @@ const Timesheet = () => {
             </tbody>
           </table>
         </div>
-
-        
-    
         {/* Actions */}
         <div className="flex justify-between">
           <button
