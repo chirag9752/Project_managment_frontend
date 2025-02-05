@@ -15,6 +15,9 @@ import AssignFeature from './pages/AssignFeature'
 import Timesheet from './pages/Timesheet'
 import ErrorPage from './pages/ErrorPage'
 import Bills from './pages/Billing'
+import PurchasePremiumSection from './pages/PurchasePremiumSection'
+import SuccessPage from './pages/SuccessPage'
+import TimesheetPDF from './components/timesheetpdf/timesheetDoc'
 
 function App() {
 
@@ -55,6 +58,12 @@ function App() {
         path="/projects" 
         element={ <ProtectedRoute>
           <Projects/>
+        </ProtectedRoute>} />
+
+        <Route 
+        path="/success" 
+        element={ <ProtectedRoute>
+          <SuccessPage/>
         </ProtectedRoute>} />
 
         <Route 
@@ -111,9 +120,18 @@ function App() {
          </ProtectedRoute>
         } />
 
+        <Route 
+        path="/projects/purchase/premium" 
+        element={
+          <ProtectedRoute>
+          <PurchasePremiumSection/>
+         </ProtectedRoute>
+        } />
+
         <Route path='/login' element={<Login/>} />
         {/* <Route path='/signup' element={<SignUp/>} /> */}
         <Route path='/navbar' element={<Navbar/>} />
+        <Route path='/timesheetpdf' element={<TimesheetPDF/>} />
         <Route path='/error' element={<ErrorPage/>} />
       </Routes>
     </div>

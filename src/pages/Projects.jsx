@@ -35,7 +35,7 @@ const Projects = () => {
         setProjects(response.data.data);
         setLoading(false);
         }catch(error){
-        toast.error(error.response.data.error);
+        toast.error(error.response.data.errors);
       }
     }
 
