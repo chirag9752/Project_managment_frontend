@@ -7,6 +7,8 @@ import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllowedFeatures } from "../redux/features/featureSlice";
+import { logoutUsers } from "../components/apiService";
+import config from "../components/contants/config.json";
 
 const Home = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -35,6 +37,24 @@ const Home = () => {
   const isFeatureAllowed = (featureName) => {
     return featureAllowed.includes(featureName);
   }
+
+  const logoutHandler = async () => {
+    try {
+      const response = await logoutUsers();
+      if (response.status === 200) {
+        localStorage.removeItem('current_user_feature');
+        toast.success(config.Logout);
+        localStorage.removeItem('token');
+        navigate("/login");
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Error:', error.response.data.status.error);
+      } else {
+        console.error('Network Error:', error.message);
+      }
+    }
+  };
 
   const GoToPremiumHandler = () => {
     navigate("/projects/purchase/premium");
@@ -124,13 +144,21 @@ const Home = () => {
               }
             </ul>
           </div>
-
-          <div className="items-center justify-center flex">
-             <button 
-             onClick={GoToPremiumHandler}
-             className="p-3 hover:bg-slate-500 w-[70%] text-base rounded-lg font-bold text-center text-white uppercase bg-blue-600 dark:text-gray-400"
-             >Go-Premium</button>
-          </div>
+          {
+            !isFeatureAllowed("print_pdf")  ? (
+              <div className="items-center justify-center flex">
+                <button 
+                onClick={GoToPremiumHandler}
+                className="p-3 hover:bg-slate-500 w-[70%] text-base rounded-lg font-bold text-center text-white uppercase bg-blue-600 dark:text-gray-400"
+                >Go-Premium</button>
+              </div>
+            ) : (<div className="items-center justify-center flex">
+              <button 
+              onClick={logoutHandler}
+              className="p-3 hover:bg-slate-500 w-[70%] text-base rounded-lg font-extrabold text-center text-white uppercase bg-blue-800 dark:text-gray-400"
+              >Sign out</button>
+            </div>)
+          }     
         </div>
       </div>
 

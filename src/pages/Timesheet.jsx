@@ -6,8 +6,10 @@ import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import { executeFeature, fetchSingleTimesheet } from "../components/apiService";
 import config from "../components/contants/config.json";
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+// import html2canvas from 'html2canvas';
+// import jsPDF from 'jspdf';
+import { Dialog, DialogBackdrop, DialogPanel} from '@headlessui/react'
+
 
 const Timesheet = () => {
   const [hours, setHours] = useState({
@@ -32,6 +34,9 @@ const Timesheet = () => {
   const [printPdfAccess, setPrintPdfAccess] = useState(false);
   const navigate = useNavigate();
   const pdfRef = useRef();
+  const [open, setOpen] = useState(false);
+  const [startdate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(()=> {
     const currentUserFeature = localStorage.getItem('current_user_feature');
@@ -147,25 +152,47 @@ const Timesheet = () => {
     setCurrentWeek(prevWeekStart);
   };
 
-  const downloadPDF = () => {
-    const input = pdfRef.current;
-    html2canvas(input,{
-      useCORS: true,
-      allowTaint: true,
-      scale: 2,
-    }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4', true);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-      const imgX = (pdfWidth - imgWidth * ratio)/2;
-      const imgY = 30;
-      pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
-      pdf.save('timesheet.pdf');
-    })
+  // const downloadPDF = () => {
+  //   const input = pdfRef.current;
+  //   html2canvas(input,{
+  //     useCORS: true,
+  //     allowTaint: true,
+  //     scale: 2,
+  //   }).then((canvas) => {
+  //     const imgData = canvas.toDataURL('image/png');
+  //     const pdf = new jsPDF('p', 'mm', 'a4', true);
+  //     const pdfWidth = pdf.internal.pageSize.getWidth();
+  //     const pdfHeight = pdf.internal.pageSize.getHeight();
+  //     const imgWidth = canvas.width;
+  //     const imgHeight = canvas.height;
+  //     const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+  //     const imgX = (pdfWidth - imgWidth * ratio)/2;
+  //     const imgY = 30;
+  //     pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+  //     pdf.save('timesheet.pdf');
+  //   })
+  // }
+
+  const openHandler = () => {
+    setOpen(true);
+  }
+
+  const handleDateChange = (e, dateStatus) => {
+    const inputDate = e.target.value;
+    const [year, month, day] = inputDate.split('-');
+    const formattedDate = `${year}/${month}/${day}`;
+    if(dateStatus === 'startDate'){
+      setStartDate(formattedDate);
+      console.log("startdate", startdate);
+    }else{
+      setEndDate(formattedDate);
+      console.log("endDate", endDate);
+    }
+  };
+
+  const submitpdfHandler = (e) => {
+    e.preventDefault();
+    // api call to fetch all detail 
   }
 
   return (
@@ -173,7 +200,8 @@ const Timesheet = () => {
       {
         printPdfAccess ? (
         <button
-        onClick={downloadPDF}
+        // onClick={downloadPDF}
+        onClick={openHandler}
         className="bg-blue-500 p-2 m-5 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
         Print as PDF
         </button>
@@ -182,11 +210,8 @@ const Timesheet = () => {
        <div className="max-w-4xl mx-auto mt-[4%] p-6 bg-gray-100 rounded-lg shadow-md"
         ref = {pdfRef}
        >
-
        <h2 className="text-2xl font-semibold text-center mb-6">Weekly Timesheet of [{timesheetData.name}]</h2>
- 
        {/* Week status */}
-       
        <div className="mb-6 flex justify-between">
            <div className="flex gap-3 items-center">
              <button 
@@ -246,7 +271,7 @@ const Timesheet = () => {
          <textarea
            value={description}
            onChange={(e) => setDescription(e.target.value)}
-           maxLength="100"
+           maxLength="1000"
            placeholder="Enter any additional details..."
            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
          />
@@ -255,19 +280,65 @@ const Timesheet = () => {
        {/* Actions */}
        <div className="flex justify-between">
          <button
-             onClick={handleSubmit}
-             className="px-4 py-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600"
-           >
-             Submit
+           onClick={handleSubmit}
+           className="px-4 py-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600"
+         >
+          Submit
          </button>
          <button
            className="px-4 py-2 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600"
            onClick={() => navigate(-1)}
          >
-           Cancel
+          Cancel
          </button>
        </div>
      </div>
+
+     { open ? (<Dialog open = {open} onClose={setOpen} className="relative z-10">
+        <DialogBackdrop
+          transition
+          className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+        />
+
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <DialogPanel
+              transition
+              className="relative transform overflow-hidden rounded-lg bg-white text-center shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-sm data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+            >
+              <div className="bg-white w-full p-1 justify-center cursor-pointer">
+                  <div className="justify-evenly w-full p-2 flex">
+                    <form onSubmit= {submitpdfHandler} >
+                      <div >
+                        <div className="p-2 gap-2 flex justify-center items-center">
+                          <label htmlFor="startDate" className="w-full">start Date:</label>
+                            <input type="date"
+                            id="startDate"
+                            value={startdate.replace(/\//g, '-')}
+                            onChange={(e) => handleDateChange(e, 'startDate')}
+                            className="mt-1 block w-full cursor-pointer h-14 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
+                          </div>
+                        <div className="p-2 gap-2 flex justify-center items-center">
+                          <label htmlFor="endDate" className="w-full">end Date: </label>
+                            <input type="date"
+                            id="endDate"
+                            value={endDate.replace(/\//g, '-')}
+                            onChange={(e) => handleDateChange(e, 'endDate')}
+                            className="mt-1 mb-2 block cursor-pointer h-14 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
+                        </div>
+                        <button type="submit" 
+                        className="m-1 p-2 w-full hover:scale-105 bg-blue-600 text-white rounded-full font-extrabold hover:bg-slate-500"
+                        >
+                        Print-PDF</button>
+                      </div>
+                    </form>
+                </div> 
+              </div>
+            </DialogPanel>
+        </div>
+      </div>
+    </Dialog>) : (<></>)}
+
      </div>
     );  
 };
