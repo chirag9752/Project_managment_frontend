@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchAllowedFeatures } from "../redux/features/featureSlice";
 import { logoutUsers } from "../components/apiService";
 import config from "../components/contants/config.json";
+import defaultimage from "../assets/defaultImage.jpg"
 
 const Home = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -171,15 +172,27 @@ const Home = () => {
         <p className="text-center text-gray-600">Loading...</p>
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
+          {console.log(users)}
           {users.map((user) => (
             <Link to={`/users/details/${user.id}`} 
               key={user.id}
               className="p-4  hover:scale-105 transition-shadow bg-white rounded-lg shadow-lg hover:shadow-2xl" 
             >
-              <h2 className="text-xl font-semibold text-gray-800">
-                {user.name}
-              </h2>
-              <p className="text-gray-600">{user.email}</p>
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {user.name}
+                </h2>
+                <p className="text-gray-600">{user.email}</p>
+              </div>
+
+              <div className="h-20 w-20">
+                <img 
+                className="rounded-full border"
+                src={user?.profile_photo_url ? user?.profile_photo_url : defaultimage }/>
+              </div>
+            </div>
+
             </Link>
           ))}
         </div>

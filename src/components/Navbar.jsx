@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -7,6 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import config from "../components/contants/config.json";
 import test from "../assets/baba.png"
 import { logoutUsers } from "./apiService";
+import axios from "axios";
 
 const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
 
@@ -17,6 +18,7 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
   const currentUserId = decodedToken.id;
   const navigate = useNavigate();
   const [menuVisible, setMenuVisible] = useState(false);
+  const [userData, setUserData] = useState(null);
   const toggleMenu = () => setMenuVisible((prev) => !prev);
 
   const logoutHandler = async () => {
@@ -36,6 +38,18 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
       }
     }
   };
+
+  useEffect(() => {
+    const fetchUser = async() => {
+      try{
+        const response  = await axios.get(`http://localhost:3000/users/details/${currentUserId}`);
+        setUserData(response.data);
+      }catch(err){
+        console.log(err);
+      }
+    };
+    fetchUser();
+  }, [currentUserId])
 
   return (
     <nav className="relative bg-gray-200 border-gray-200 dark:bg-gray-900">
@@ -57,7 +71,7 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
             <span className="sr-only">Open user menu</span>
             <img
               className="w-20 h-20 rounded-full"
-              src={test}
+              src={userData?.profile_photo_url ? userData?.profile_photo_url : test }
               alt="user photo"
             />
           </button>

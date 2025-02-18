@@ -14,5 +14,6 @@
     "Create_employee": "Employee successfully created",
     "Alredy_Registered": "user already registered please check again",
     "CheckLoadError": "Error creating checkout session",
-    "error": "An error occurred. Please try again."
+    "error": "An error occurred. Please try again.",
+    "profileupdate": "successfully updated profile"
 }
