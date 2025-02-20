@@ -6,8 +6,7 @@ import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import config from "../components/contants/config.json";
 import test from "../assets/baba.png"
-import { logoutUsers } from "./apiService";
-import axios from "axios";
+import { currentUserDetail, logoutUsers } from "./apiService";
 
 const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
 
@@ -42,7 +41,8 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
   useEffect(() => {
     const fetchUser = async() => {
       try{
-        const response  = await axios.get(`http://localhost:3000/users/details/${currentUserId}`);
+        const response = await currentUserDetail(currentUserId);
+        console.log(response);
         setUserData(response.data);
       }catch(err){
         console.log(err);
@@ -86,7 +86,6 @@ const Navbar = ({toggleDrawer, dropdownVisible, toggleDropdown}) => {
                     {userName}
                   </Link>
                 </li>
-                
                 <li>
                   <Link to="/setting"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"

@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import "../App.css";
 import Navbar from "../components/Navbar";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllowedFeatures } from "../redux/features/featureSlice";
-import { logoutUsers } from "../components/apiService";
+import { fetchUsers, logoutUsers } from "../components/apiService";
 import config from "../components/contants/config.json";
 import defaultimage from "../assets/defaultImage.jpg"
 
@@ -65,7 +64,7 @@ const Home = () => {
     const fetchData = async() => {
       try{
         setLoading(true);
-        const response = await axios.get("http://localhost:3000/users");
+        const response = await fetchUsers("/users");
         setLoading(false);
         setUsers(response.data.data);
       }catch(error){
@@ -172,7 +171,6 @@ const Home = () => {
         <p className="text-center text-gray-600">Loading...</p>
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
-          {console.log(users)}
           {users.map((user) => (
             <Link to={`/users/details/${user.id}`} 
               key={user.id}
@@ -192,7 +190,6 @@ const Home = () => {
                 src={user?.profile_photo_url ? user?.profile_photo_url : defaultimage }/>
               </div>
             </div>
-
             </Link>
           ))}
         </div>

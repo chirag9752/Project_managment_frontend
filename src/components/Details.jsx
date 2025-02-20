@@ -7,6 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import config from '../components/contants/config.json'
 import defaultimage from "../assets/defaultImage.jpg"
+// import { saveProfile } from "./apiService";
 
 const UserProfileModal = () => {
 
@@ -55,7 +56,6 @@ const UserProfileModal = () => {
     role: (userData.data.role ? userData.data.role : "Not-assigned"),
     subrole: (userData.data.employee_type ? userData.data.employee_type : 'Sub role not assigned'),
     activities: userData.projects
-
   };
 
   const clickHandler = () => {
@@ -64,15 +64,23 @@ const UserProfileModal = () => {
 
   const submitProfileHandler = async() => {
     try{
+      if(file === null){
+        toast.error("Please add a profile photo first");
+        return;
+      }
       const formData = new FormData();
       formData.append('user[profile_photo]', file);
       formData.append('user[email]', userData.data.email);
       formData.append('user[id]', userData.data.id);
+      
       const response = await axios.post(`http://localhost:3000/users/update/profile/${currentUserId}`,formData);
       if(response.status == 200){
         toast.success(config.profileupdate);
       }
-
+      // const response = await saveProfile(currentUserId, formData);
+      // if(response.status === 200){
+      //   toast.success(config.profileupdate);
+      // }
     }catch(error){
       console.log(error);
     }

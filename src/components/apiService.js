@@ -32,7 +32,21 @@ export const fetchUsers = async() => {
   return response;
 }
 
+export const currentUserDetail = async(currentUserId) => {
+  const response = await apiClient.get(`/users/details/${currentUserId}`);
+  return response;
+}
+
 export const logoutUsers = async() => {
   const response = await apiClient.delete('/logout');
   return response;
 }
+
+
+// export const saveProfile = async(currentUserId, formData) => {
+//   console.log(currentUserId);
+//   console.log(formData);
+//   // const response = await apiClient.post(`/users/update/profile/${currentUserId}`, formdata);
+//   // console.log(response);
+//   // return response;
+// }
