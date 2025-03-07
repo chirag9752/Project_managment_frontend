@@ -51,7 +51,7 @@ import employee from "../assets/employoooo.png"
       console.log("response", res);
       if(res.status === 200){
           toast.success(config.Create_employee);
-          navigate("/");
+          // navigate("/");
           setformData({user: { email: "", password: "",  name: "", role: "", employee_type: ""}});
       }
 
@@ -101,7 +101,7 @@ import employee from "../assets/employoooo.png"
               value={formData.user.email}
               onChange={Handlerfunction}
             />
-              
+
             <input
               className="w-full px-4 h-14 py-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               type="password"
@@ -110,7 +110,7 @@ import employee from "../assets/employoooo.png"
               value={formData.user.password}
               onChange={Handlerfunction}
             />
-              
+
             <div className="">
               <div className="flex flex-row items-center gap-3 mb-4">
                 <label className="block mb-2 font-medium text-gray-700">Role</label>

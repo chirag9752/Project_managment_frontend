@@ -7,6 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import config from '../components/contants/config.json'
 import defaultimage from "../assets/defaultImage.jpg"
+import { currentUserDetail } from "./apiService";
 // import { saveProfile } from "./apiService";
 
 const UserProfileModal = () => {
@@ -31,7 +32,7 @@ const UserProfileModal = () => {
     const fetchUser = async() => {
       try{
         setLoading(true);
-        const response  = await axios.get(`http://localhost:3000/users/details/${id}`);
+        const response = await currentUserDetail(id);
         setUserData(response.data);
       }catch(err){
           setError(err);
@@ -72,7 +73,6 @@ const UserProfileModal = () => {
       formData.append('user[profile_photo]', file);
       formData.append('user[email]', userData.data.email);
       formData.append('user[id]', userData.data.id);
-      
       const response = await axios.post(`http://localhost:3000/users/update/profile/${currentUserId}`,formData);
       if(response.status == 200){
         toast.success(config.profileupdate);

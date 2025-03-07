@@ -6,10 +6,8 @@ import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 import { executeFeature, fetchSingleTimesheet } from "../components/apiService";
 import config from "../components/contants/config.json";
-// import html2canvas from 'html2canvas';
-// import jsPDF from 'jspdf';
 import { Dialog, DialogBackdrop, DialogPanel} from '@headlessui/react'
-
+import axios from "axios";
 
 const Timesheet = () => {
   const [hours, setHours] = useState({
@@ -110,12 +108,10 @@ const Timesheet = () => {
 
   const handleSubmit = async() => {
     try{
-
       if(description === "" || hours.Monday === "" || hours.Tuesday === "" || hours.Wednesday === "" || hours.Thursday === "" || hours.Friday === ""){
         toast.error("all details are mendatory");
         return;
       }
-
       const response = await executeFeature(
         {
          WeekData: {
@@ -152,27 +148,6 @@ const Timesheet = () => {
     setCurrentWeek(prevWeekStart);
   };
 
-  // const downloadPDF = () => {
-  //   const input = pdfRef.current;
-  //   html2canvas(input,{
-  //     useCORS: true,
-  //     allowTaint: true,
-  //     scale: 2,
-  //   }).then((canvas) => {
-  //     const imgData = canvas.toDataURL('image/png');
-  //     const pdf = new jsPDF('p', 'mm', 'a4', true);
-  //     const pdfWidth = pdf.internal.pageSize.getWidth();
-  //     const pdfHeight = pdf.internal.pageSize.getHeight();
-  //     const imgWidth = canvas.width;
-  //     const imgHeight = canvas.height;
-  //     const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-  //     const imgX = (pdfWidth - imgWidth * ratio)/2;
-  //     const imgY = 30;
-  //     pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
-  //     pdf.save('timesheet.pdf');
-  //   })
-  // }
-
   const openHandler = () => {
     setOpen(true);
   }
@@ -190,9 +165,84 @@ const Timesheet = () => {
     }
   };
 
-  const submitpdfHandler = (e) => {
+  const checkdates = () => {
+    const start = new Date(startdate.replace(/\//g, "-")); // Convert "YYYY/MM/DD" to "YYYY-MM-DD"
+    const end = new Date(endDate.replace(/\//g, "-"));
+    if(start > end){
+      toast.error("Ending date should be greater than start date");
+      return -1;
+    }
+  }
+
+  const submitpdfHandler = async(e) => {
     e.preventDefault();
-    // api call to fetch all detail 
+    try{
+      if (checkdates() === -1){
+        return;
+      }
+      const response = await axios.post("http://localhost:3000/timesheets/fetchpdf", {
+        data: {
+            userId: currentUserId,
+            profileId: currentProfileId,
+            projectId: timesheetData.id,
+            startDate: startdate,
+            endDate: endDate
+        }
+      },
+       {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: "blob"
+      }
+    );
+
+    const blob = new Blob([response.data], { type: "application/pdf" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `timesheet_report_${startdate}_${endDate}.pdf`); // File name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    }catch(error) {
+      console.error("Error downloading PDF:", error);
+      alert("Failed to download the PDF. Please try again.");
+    }
+  }
+
+  const submitCSVHandler = async(e) => {
+    e.preventDefault();
+    try{
+      if (checkdates() === -1){
+        return;
+      }
+      const response = await axios.post("http://localhost:3000/timesheets/fetchcsv",{
+        data: {
+            userId: currentUserId,
+            profileId: currentProfileId,
+            projectId: timesheetData.id,
+            startDate: startdate,
+            endDate: endDate
+        }
+      },
+       {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: "blob"
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "timesheets.csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }catch(err){
+      console.log(err);
+    }
   }
 
   return (
@@ -200,7 +250,6 @@ const Timesheet = () => {
       {
         printPdfAccess ? (
         <button
-        // onClick={downloadPDF}
         onClick={openHandler}
         className="bg-blue-500 p-2 m-5 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
         Print as PDF
@@ -308,7 +357,7 @@ const Timesheet = () => {
             >
               <div className="bg-white w-full p-1 justify-center cursor-pointer">
                   <div className="justify-evenly w-full p-2 flex">
-                    <form onSubmit= {submitpdfHandler} >
+                    <form onSubmit={(e) => submitpdfHandler(e)} >
                       <div >
                         <div className="p-2 gap-2 flex justify-center items-center">
                           <label htmlFor="startDate" className="w-full">start Date:</label>
@@ -330,6 +379,10 @@ const Timesheet = () => {
                         className="m-1 p-2 w-full hover:scale-105 bg-blue-600 text-white rounded-full font-extrabold hover:bg-slate-500"
                         >
                         Print-PDF</button>
+                        <button onClick={submitCSVHandler} 
+                        className="m-1 p-2 w-full hover:scale-105 bg-blue-600 text-white rounded-full font-extrabold hover:bg-slate-500"
+                        >
+                        Print-CSV</button>
                       </div>
                     </form>
                 </div> 
